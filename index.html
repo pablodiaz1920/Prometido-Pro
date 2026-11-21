@@ -46,7 +46,7 @@
               Prometido Pro
             </h1>
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900">
-              v4.0
+              v5.0
             </span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Manual de Operaciones & CRM Biológico</p>
@@ -219,6 +219,54 @@
 
       <div id="missionsContainer" class="space-y-2 sm:space-y-2.5">
         <!-- Dynamic checklist injected by JS -->
+      </div>
+    </section>
+
+    <!-- DAILY LOG -->
+    <section id="dailyLogSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-3 scroll-mt-20">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><span>📝</span> Bitácora del Día</h3>
+          <p class="text-[11px] sm:text-xs text-slate-500">Cómo la viste hoy. Con unos días de registro, las estadísticas aprenden su patrón.</p>
+        </div>
+        <div class="flex items-center gap-1.5 self-start sm:self-auto">
+          <button id="logPrevBtn" type="button" aria-label="Día anterior" class="p-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">◀</button>
+          <div class="text-center min-w-[110px]">
+            <span id="logDateLabel" class="block text-xs font-extrabold capitalize">Hoy</span>
+            <span id="logDateMeta" class="block text-[10px] text-slate-400 font-mono"></span>
+          </div>
+          <button id="logNextBtn" type="button" aria-label="Día siguiente" class="p-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold disabled:opacity-30">▶</button>
+          <button id="logTodayBtn" type="button" class="hidden px-2 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold">Hoy</button>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">🩸 Flujo</span>
+          <div id="logFlow" class="flex flex-wrap gap-1.5"></div>
+          <div id="logPeriodSuggest" class="hidden p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-rose-800 dark:text-rose-200 text-[11px]">Hay sangrado fuera de la fecha prevista. ¿Empezó la regla este día?</span>
+            <button id="logPeriodSuggestBtn" type="button" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold">Registrar inicio</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1.5">
+            <span class="font-bold text-slate-600 dark:text-slate-300">💭 Estado de ánimo</span>
+            <div id="logMood" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div class="space-y-1.5">
+            <span class="font-bold text-slate-600 dark:text-slate-300">⚡ Energía</span>
+            <div id="logEnergy" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">🩺 Síntomas</span>
+          <div id="logSymptoms" class="flex flex-wrap gap-1.5"></div>
+        </div>
+        <div class="space-y-1.5">
+          <label for="logText" class="font-bold text-slate-600 dark:text-slate-300">✍️ Nota del día</label>
+          <textarea id="logText" rows="2" maxlength="500" placeholder="Ej. Hoy estaba muy cariñosa; le dolió la cabeza por la tarde…" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
+        </div>
       </div>
     </section>
 
@@ -423,6 +471,30 @@
       </div>
     </section>
 
+    <!-- STATISTICS -->
+    <section id="statsSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📊</span>
+          <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">Estadísticas de su Ciclo</h3>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Calculadas con los inicios de regla registrados y la bitácora diaria.</p>
+      </div>
+      <div id="statsTiles" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <div class="space-y-1">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">Duración de cada ciclo (días)</h4>
+        <div id="cycleChart"></div>
+      </div>
+      <div class="space-y-1.5">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">Lo más frecuente en cada fase</h4>
+        <div id="phaseInsights" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
+      <details class="group">
+        <summary class="cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200 select-none">📍 Historial de reglas registradas <span class="text-slate-400 font-normal">(ver / corregir)</span></summary>
+        <div id="periodHistoryTable" class="mt-2"></div>
+      </details>
+    </section>
+
     <!-- DOSSIER & NOTES SECTION -->
     <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
@@ -442,6 +514,8 @@
           <span>Añadir Anotación</span>
         </button>
       </div>
+
+      <input id="noteSearch" type="search" placeholder="🔎 Buscar en el dossier…" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none text-xs">
 
       <!-- Filters for Notes -->
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs">
@@ -483,13 +557,7 @@
       <div class="space-y-3">
         <div class="space-y-1">
           <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Selecciona la frase o situación:</label>
-          <select id="phraseSelect" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500">
-            <option value="fine">1. "No me pasa nada, déjame."</option>
-            <option value="dinner">2. "No sé qué quiero cenar... elige tú lo que sea."</option>
-            <option value="ugly">3. "Hoy me siento fea y nada me queda bien."</option>
-            <option value="busy">4. "¿Estás ocupado o podemos hablar dos minutos?"</option>
-            <option value="plans">5. "¿Tenemos algún plan este fin de semana?"</option>
-          </select>
+          <select id="phraseSelect" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500"></select>
         </div>
 
         <div id="translationOutput" class="p-3.5 sm:p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-3">
@@ -587,8 +655,13 @@
 
       <form id="configForm" class="space-y-3.5 text-xs sm:text-sm">
         <div class="space-y-1">
-          <label class="font-bold text-slate-700 dark:text-slate-300">Nombre de tu prometida:</label>
-          <input type="text" id="cfgFiancéeName" required maxlength="40" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <label for="cfgFiancéeName" class="font-bold text-slate-700 dark:text-slate-300">Su nombre:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <select id="cfgPartnerLabel" aria-label="Ella es tu" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+              <option>Prometida</option><option>Esposa</option><option>Novia</option><option>Pareja</option>
+            </select>
+            <input type="text" id="cfgFiancéeName" required maxlength="40" class="col-span-2 w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          </div>
         </div>
 
         <div class="space-y-1">
@@ -639,6 +712,63 @@
           </label>
         </div>
       </div>
+
+      <!-- Notificaciones -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🔔</span>
+            <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Aviso diario</h4>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input id="cfgNotifyEnabled" type="checkbox" class="sr-only peer">
+            <span class="w-10 h-6 rounded-full bg-slate-300 dark:bg-slate-700 peer-checked:bg-rose-600 transition-colors"></span>
+            <span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span>
+          </label>
+        </div>
+        <p id="notifyStatus" class="text-[11px] text-slate-500 dark:text-slate-400"></p>
+        <div class="grid grid-cols-2 gap-2 items-center">
+          <label class="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300">Hora:
+            <input id="cfgNotifyTime" type="time" class="flex-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+          </label>
+          <button id="notifyTestBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Probar aviso</button>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-snug">En Android con la app instalada, Chrome intenta avisarte aunque no la abras (puede retrasarse). En iPhone el aviso llega al abrir la app. Para recordatorios 100% puntuales usa también "Exportar Calendario (.ics)".</p>
+      </div>
+
+      <!-- Nube -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">☁️</span>
+          <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Sincronización en la nube <span class="font-normal text-slate-400">(opcional)</span></h4>
+        </div>
+        <p id="cloudError" class="hidden p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-[11px]"></p>
+
+        <div id="cloudSetup" class="space-y-2">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Respalda tus datos en tu propio proyecto gratuito de Firebase y compártelos entre dos celulares (los dos inician sesión con la misma cuenta). Pasos en el README del proyecto.</p>
+          <textarea id="cloudConfigInput" rows="3" placeholder="Pega aquí el bloque firebaseConfig = { apiKey: ..., projectId: ... }" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none font-mono text-[11px]"></textarea>
+          <button id="cloudSaveConfigBtn" type="button" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Guardar configuración</button>
+        </div>
+
+        <div id="cloudLogin" class="hidden space-y-2">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Proyecto: <strong id="cloudProject" class="font-mono"></strong> · <button id="cloudForgetBtn" type="button" class="underline">cambiar</button></p>
+          <input id="cloudEmailInput" type="email" autocomplete="email" placeholder="Correo" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <input id="cloudPassInput" type="password" autocomplete="current-password" placeholder="Contraseña (mín. 6)" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <div class="grid grid-cols-2 gap-2">
+            <button id="cloudSignInBtn" type="button" class="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold">Iniciar sesión</button>
+            <button id="cloudSignUpBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Crear cuenta</button>
+          </div>
+        </div>
+
+        <div id="cloudConnected" class="hidden space-y-2">
+          <p class="text-[11px] text-slate-600 dark:text-slate-300">✅ Conectado como <strong id="cloudEmail"></strong></p>
+          <p id="cloudLastSync" class="text-[11px] font-mono text-slate-500 dark:text-slate-400"></p>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="cloudSyncNowBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">🔄 Sincronizar ya</button>
+            <button id="cloudSignOutBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -648,7 +778,7 @@
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <span class="text-2xl">📝</span>
-          <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Nueva Anotación en Dossier</h3>
+          <h3 id="noteModalTitle" class="text-base font-extrabold text-slate-800 dark:text-slate-100">Nueva Anotación en Dossier</h3>
         </div>
         <button type="button" data-close="noteModal" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
           ✕
@@ -692,7 +822,7 @@
           <button type="button" data-close="noteModal" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
             Cancelar
           </button>
-          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm">
+          <button id="noteSubmitBtn" type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm">
             Guardar Nota
           </button>
         </div>
@@ -757,6 +887,8 @@
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/cycle.js"></script>
+  <script src="js/sync.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

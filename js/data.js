@@ -33,9 +33,15 @@ const PHASES = {
       'Evita debates existenciales o discusiones sobre presupuestos hoy.'
     ],
     missions: [
-      { id: 'w1', text: 'Sorprenderla con su postre o infusión caliente favorita sin que lo pida.' },
-      { id: 'w2', text: 'Darle un masaje suave en pies o espalda baja durante 10 minutos.' },
-      { id: 'w3', text: 'Hacerte cargo 100% de la cena de hoy (cocinar o pedir a domicilio).' }
+      { id: 'w1', text: "Sorprenderla con su postre o infusión caliente favorita sin que lo pida." },
+      { id: 'w2', text: "Darle un masaje suave en pies o espalda baja durante 10 minutos." },
+      { id: 'w3', text: "Hacerte cargo 100% de la cena de hoy (cocinar o pedir a domicilio)." },
+      { id: 'w4', text: "Calentarle la bolsa de agua o la compresa antes de que se acueste." },
+      { id: 'w5', text: "Revisar que tenga toallas, tampones o lo que use, y reponer si falta." },
+      { id: 'w6', text: "Lavar los platos y recoger la cocina sin anunciarlo." },
+      { id: 'w7', text: "Prepararle una noche de película: manta, snacks y que ella elija." },
+      { id: 'w8', text: "Mandarle un mensaje a media tarde: \"¿Cómo te sientes? ¿Te llevo algo?\"." },
+      { id: 'w9', text: "Cancelar o posponer planes cansados y decirle que no pasa nada." }
     ]
   },
   spring: {
@@ -67,9 +73,15 @@ const PHASES = {
       'No dejes pasar esta ventana para tener citas divertidas.'
     ],
     missions: [
-      { id: 'sp1', text: 'Invitarla a una cita fuera de la rutina (cine, café lindo, caminata).' },
-      { id: 'sp2', text: 'Preguntarle qué proyectos o ideas tiene en mente y escucharla con interés.' },
-      { id: 'sp3', text: 'Tomarle una foto linda espontánea y mandársela diciéndole lo hermosa que está.' }
+      { id: 'sp1', text: "Invitarla a una cita fuera de la rutina (cine, café lindo, caminata)." },
+      { id: 'sp2', text: "Preguntarle qué proyectos o ideas tiene en mente y escucharla con interés." },
+      { id: 'sp3', text: "Tomarle una foto linda espontánea y mandársela diciéndole lo hermosa que está." },
+      { id: 'sp4', text: "Proponer hacer ejercicio juntos: correr, bici, baile o gimnasio." },
+      { id: 'sp5', text: "Planear juntos el próximo viaje o escapada de fin de semana." },
+      { id: 'sp6', text: "Probar un restaurante o receta nueva que ella quiera conocer." },
+      { id: 'sp7', text: "Apoyar una idea espontánea suya diciendo \"¡Vamos!\" sin peros." },
+      { id: 'sp8', text: "Hablar de metas como pareja (boda, casa, ahorro) con entusiasmo." },
+      { id: 'sp9', text: "Organizar una salida con amigos que a ella le caigan bien." }
     ]
   },
   summer: {
@@ -101,9 +113,15 @@ const PHASES = {
       'Si no están buscando embarazo ahora mismo, ¡precaución máxima de fertilidad!'
     ],
     missions: [
-      { id: 'su1', text: 'Vestirte elegante para verla o ponerte su loción favorita.' },
-      { id: 'su2', text: 'Comprarle unas flores o una nota romántica escrita a mano.' },
-      { id: 'su3', text: 'Planear una noche íntima con velas o comida deliciosa.' }
+      { id: 'su1', text: "Vestirte elegante para verla o ponerte su loción favorita." },
+      { id: 'su2', text: "Comprarle unas flores o una nota romántica escrita a mano." },
+      { id: 'su3', text: "Planear una noche íntima con velas o comida deliciosa." },
+      { id: 'su4', text: "Decirle tres cosas concretas que admiras de ella." },
+      { id: 'su5', text: "Llevarla a bailar, a un bar bonito o a un evento social." },
+      { id: 'su6', text: "Mandarle un mensaje coqueto en mitad del día." },
+      { id: 'su7', text: "Recrear vuestra primera cita o un recuerdo especial." },
+      { id: 'su8', text: "Hacerle un cumplido sobre cómo se ve hoy, con detalle." },
+      { id: 'su9', text: "Dejar el celular de lado toda la cena y estar 100% presente." }
     ]
   },
   autumn: {
@@ -136,9 +154,15 @@ const PHASES = {
       'No intentes resolver sus problemas emocionales con lógica fría; solo escucha.'
     ],
     missions: [
-      { id: 'au1', text: 'Rellenar la alacena con su antojo preferido (salado o dulce).' },
-      { id: 'au2', text: 'Ordenar la habitación o la sala sin que nadie te lo pida.' },
-      { id: 'au3', text: 'Darle un abrazo largo de oso en silencio cuando suspire hondo.' }
+      { id: 'au1', text: "Rellenar la alacena con su antojo preferido (salado o dulce)." },
+      { id: 'au2', text: "Ordenar la habitación o la sala sin que nadie te lo pida." },
+      { id: 'au3', text: "Darle un abrazo largo de oso en silencio cuando suspire hondo." },
+      { id: 'au4', text: "Proponer la cena con dos opciones cerradas antes de que tenga hambre." },
+      { id: 'au5', text: "Escucharla 10 minutos sin dar soluciones, solo validar." },
+      { id: 'au6', text: "Encargarte de un pendiente o trámite que le esté estresando." },
+      { id: 'au7', text: "Prepararle un baño caliente o una ducha con su música." },
+      { id: 'au8', text: "Bajar el volumen de todo: menos ruido, menos visitas, menos prisa." },
+      { id: 'au9', text: "Decirle \"Estoy de tu lado\" aunque no haya pasado nada." }
     ]
   }
 };
@@ -205,5 +229,65 @@ const TRANSLATIONS = {
     real: 'Traducción: "Quiero sentir que piensas en nosotros y que tomas la iniciativa sin que yo tenga que organizarlo todo".',
     danger: 'ERROR FATAL: Decir "No sé, lo que tú quieras hacer".',
     tactic: 'RESPUESTA RECOMENDADA: "Tengo una idea linda en mente para nosotros dos, déjamelo a mí. Tú solo ponte cómoda".'
+  },
+  whatever: {
+    raw: "\"Haz lo que quieras.\"",
+    real: "Traducción: \"Te estoy dando la oportunidad de demostrar que piensas en lo que yo siento. Elige bien\".",
+    danger: "ERROR FATAL: Tomarlo literal y hacer exactamente lo que tú querías sin considerarla.",
+    tactic: "RESPUESTA RECOMENDADA: \"Prefiero hacerlo contigo y que estemos bien. ¿Qué te haría sentir mejor a ti?\". Y luego actúa en consecuencia."
+  },
+  tired: {
+    raw: "\"Estoy cansada.\"",
+    real: "Traducción: \"Me siento sobrecargada (física o mentalmente) y necesito que alguien comparta el peso\".",
+    danger: "ERROR FATAL: Responder \"Yo también\" y comparar cansancios.",
+    tactic: "RESPUESTA RECOMENDADA: \"Descansa, yo me encargo de la cena y de lo que falte hoy\". Y hazlo sin que tenga que dirigirte."
+  },
+  forgot: {
+    raw: "\"¿Sabes qué día es hoy?\"",
+    real: "Traducción: \"Hay una fecha o detalle importante para mí y quiero ver si también lo es para ti\".",
+    danger: "ERROR FATAL: Adivinar al azar o decir \"¿Martes?\".",
+    tactic: "RESPUESTA RECOMENDADA: Prevención: anota fechas importantes en el dossier. Si te pilla, sé honesto: \"Dime, que no quiero equivocarme contigo\" y compénsalo con un detalle ese mismo día."
+  },
+  fat: {
+    raw: "\"¿Me veo gorda con esto?\"",
+    real: "Traducción: \"Me siento hinchada y vulnerable; necesito sentirme deseada y segura\".",
+    danger: "ERROR FATAL: Dudar, mirar de arriba abajo o decir \"un poquito\".",
+    tactic: "RESPUESTA RECOMENDADA: Sin pausa: \"Te ves preciosa\". Si no le convence la ropa, ofrécele: \"¿Quieres probarte el vestido azul? Ese te encanta\"."
+  },
+  friends: {
+    raw: "\"Otra vez vas a salir con tus amigos...\"",
+    real: "Traducción: \"Echo de menos tiempo de calidad contigo y no me siento prioridad últimamente\".",
+    danger: "ERROR FATAL: Ponerte a la defensiva: \"¡Pero si casi nunca salgo!\".",
+    tactic: "RESPUESTA RECOMENDADA: \"Tienes razón, últimamente he estado poco. ¿Qué te parece si el sábado es solo para nosotros?\". Y agéndalo de verdad."
+  },
+  cry: {
+    raw: "\"No sé por qué estoy llorando.\"",
+    real: "Traducción: \"Mis emociones se desbordaron (a veces hay causa hormonal) y no necesito explicarlas, necesito contención\".",
+    danger: "ERROR FATAL: Preguntar insistentemente \"¿Pero qué te pasa?\" o \"¿Es por la regla?\".",
+    tactic: "RESPUESTA RECOMENDADA: Abrázala y dile: \"No tienes que saber por qué. Aquí estoy\". Pañuelos, agua y silencio cariñoso."
+  },
+  remember: {
+    raw: "\"Ya te lo había dicho.\"",
+    real: "Traducción: \"Siento que no me escuchas cuando te hablo y eso me hace sentir poco importante\".",
+    danger: "ERROR FATAL: Negarlo: \"No, nunca me dijiste eso\".",
+    tactic: "RESPUESTA RECOMENDADA: \"Perdona, se me pasó. Lo anoto para que no vuelva a pasar\". Y apúntalo en el dossier de verdad."
+  },
+  decide: {
+    raw: "\"¿Tú qué opinas?\"",
+    real: "Traducción: \"Quiero sentir que tomamos decisiones en equipo, no que yo cargo con todo\".",
+    danger: "ERROR FATAL: \"Me da igual\" o \"Lo que tú digas\".",
+    tactic: "RESPUESTA RECOMENDADA: Da una opinión concreta con motivo: \"Yo iría por la opción A porque…, pero si tú lo ves distinto lo hablamos\"."
+  },
+  nothing: {
+    raw: "\"No es nada, es una tontería.\"",
+    real: "Traducción: \"Es algo que me importa, pero me da miedo que lo minimices\".",
+    danger: "ERROR FATAL: \"Ah, bueno, entonces no pasa nada\" y cambiar de tema.",
+    tactic: "RESPUESTA RECOMENDADA: \"Si te importa a ti, me importa a mí. Cuéntame cuando quieras, sin prisa\"."
+  },
+  mom: {
+    raw: "\"Tu madre/familia dijo…\"",
+    real: "Traducción: \"Algo me dolió o incomodó y necesito saber que estás de mi lado\".",
+    danger: "ERROR FATAL: Defender automáticamente a tu familia o decir \"Así es ella, no le hagas caso\".",
+    tactic: "RESPUESTA RECOMENDADA: \"Entiendo que te haya molestado. Tú y yo somos equipo; si quieres, lo hablo yo con ella\"."
   }
 };
