@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Prometido Pro — CRM Táctico del Ciclo Femenino</title>
+
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#f43f5e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PrometidoPro">
+
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            rose: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+              950: '#4c0519'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom UI utility styling */
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(30, 41, 59, 0.8);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Glow highlights for cycle phases */
+    .phase-glow-winter {
+      box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.25);
+    }
+    .phase-glow-spring {
+      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
+    }
+    .phase-glow-summer {
+      box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.25);
+    }
+    .phase-glow-autumn {
+      box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.25);
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- Sticky Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80">
+    <div class="max-w-4xl mx-auto px-3.5 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-rose-500/30">
+          💍
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-rose-600 to-rose-500 bg-clip-text text-transparent">
+              Prometido Pro
+            </h1>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900">
+              CRM v3.4
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Manual de Operaciones & CRM Biológico</p>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Sync Indicator -->
+        <div id="syncStatusBadge" class="hidden sm:flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="syncStatusText">Al día</span>
+        </div>
+
+        <button onclick="openInstallModal()" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 transition-all flex items-center gap-1 active:scale-95 touch-manipulation" title="Cómo instalar en tu pantalla de inicio">
+          <span>📲</span>
+          <span class="hidden sm:inline">App Celular</span>
+          <span class="sm:hidden">App</span>
+        </button>
+
+        <button onclick="openConfigModal()" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1 active:scale-95 touch-manipulation">
+          <span>⚙️</span>
+          <span class="hidden sm:inline">Ajustar Ciclo</span>
+        </button>
+
+        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all active:scale-90" aria-label="Cambiar tema">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Responsive Container -->
+  <main class="max-w-4xl mx-auto px-3.5 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+
+    <!-- HERO CARD: Daily Status & Biological Radar -->
+    <section id="heroCard" class="relative overflow-hidden rounded-3xl p-4 sm:p-7 transition-all duration-300 border glass-card shadow-sm">
+      <div class="relative z-10 space-y-3 sm:space-y-4">
+        
+        <!-- Upper Metadata Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span id="badgeFiancéeName" class="text-xs font-bold px-2.5 py-1 rounded-full bg-white/90 dark:bg-slate-800/90 text-rose-700 dark:text-rose-300 shadow-sm border border-slate-200/60 dark:border-slate-700">
+              Prometida: Mi Amor
+            </span>
+            <span id="badgeCycleDay" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-900/10 dark:bg-white/10 text-slate-800 dark:text-slate-200">
+              Día 1 de 28
+            </span>
+          </div>
+          <span id="statusShield" class="text-xs font-semibold px-2.5 py-1 rounded-full border bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30">
+            🛡️ Zona de Resguardo
+          </span>
+        </div>
+
+        <!-- Main Phase Headline -->
+        <div>
+          <h2 id="phaseTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
+            Fase Menstrual (Invierno)
+          </h2>
+          <p id="phaseSubtitle" class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm md:text-base mt-1 font-medium leading-snug sm:leading-relaxed">
+            Modo Manta, Calma y Mimos — Los niveles hormonales bajan y el útero trabaja intensamente.
+          </p>
+        </div>
+
+        <!-- 4 Fast Metrics Interactive Row (Responsive Grid with 'Ver más') -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+          <button type="button" onclick="showStatDetail('battery')" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>🔋 Batería</span>
+              </span>
+              <span id="statBattery" class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-100 block mt-0.5">30%</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" onclick="showStatDetail('sensitivity')" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>❤️ Sensibilidad</span>
+              </span>
+              <span id="statSensitivity" class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-slate-100 truncate block mt-0.5">Alta</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" onclick="showStatDetail('craving')" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>🍫 Antojo</span>
+              </span>
+              <span id="statCraving" class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-slate-100 truncate block mt-0.5">Chocolate</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" onclick="showStatDetail('secretion')" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>💧 Secreción</span>
+              </span>
+              <span id="statSecretion" class="font-extrabold text-[11px] sm:text-xs text-rose-600 dark:text-rose-400 truncate block mt-0.5">Sangrado</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+        </div>
+
+        <!-- Golden Rule Advice Pill -->
+        <div class="mt-2 p-3 sm:p-3.5 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 flex items-start gap-2.5">
+          <span class="text-lg">👑</span>
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">Regla de Oro de Hoy:</span>
+            <p id="goldenRuleText" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug mt-0.5">
+              "No la hagas tomar decisiones complicadas hoy. Prepara cobijas, agua caliente y déjala descansar."
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- QUICK EMERGENCY SOS ACCORDION -->
+    <section class="glass-card rounded-2xl p-3 sm:p-4 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🚨</span>
+        <div>
+          <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Protocolo SOS para el Buen Prometido</h3>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">¿Situación crítica en casa? Activa una respuesta táctica inmediata:</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+        <button onclick="triggerEmergencyAction('cramp')" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all">
+          🤕 Cólicos
+        </button>
+        <button onclick="triggerEmergencyAction('badmood')" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900 active:scale-95 transition-all">
+          ⚡ Tensión
+        </button>
+        <button onclick="triggerEmergencyAction('hungry')" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900 active:scale-95 transition-all">
+          🍕 Hambre Feroz
+        </button>
+        <button onclick="triggerEmergencyAction('sad')" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 active:scale-95 transition-all">
+          🥺 Tristeza
+        </button>
+      </div>
+    </section>
+
+    <!-- MISSIONS CHECKLIST -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+            <span>🎯</span> Misiones Diarias del Buen Prometido
+          </h3>
+          <p class="text-[11px] sm:text-xs text-slate-500">Acciones de alto impacto según la fase biológica de hoy.</p>
+        </div>
+        <span id="missionCounter" class="text-[11px] sm:text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg self-start sm:self-auto">
+          0/3 completadas
+        </span>
+      </div>
+
+      <div id="missionsContainer" class="space-y-2 sm:space-y-2.5">
+        <!-- Dynamic checklist injected by JS -->
+      </div>
+    </section>
+
+    <!-- SECRETIONS MASTER PANEL -->
+    <section id="secretionsSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl sm:text-2xl">💧</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Guía Táctica de Secreciones & Moco Cervical
+            </h3>
+            <span class="text-[10px] font-mono bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 font-bold px-2 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-900">
+              Bio-Radar
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Comprende qué tipo de flujo es natural en cada etapa, qué indica sobre su fertilidad y cómo actuar como buen compañero.
+          </p>
+        </div>
+        <button onclick="scrollToSecretionsWarning()" class="text-[11px] font-bold text-cyan-700 dark:text-cyan-400 self-start sm:self-auto hover:underline flex items-center gap-1">
+          <span>🩺 Semáforo Médico</span>
+        </button>
+      </div>
+
+      <!-- 4-Card Fluid Grid for Secretions across Phases -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
+        <!-- Winter Secretion -->
+        <div class="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+              <span>🩸</span> 1. Invierno (Días 1-5)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-200/60 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200 font-bold">Sangrado</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Flujo Menstrual Activo</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Color rojo brillante a parduzco con coágulos pequeños normales. El moco cervical está oculto por el sangrado.
+          </p>
+          <div class="pt-1.5 border-t border-rose-200/60 dark:border-rose-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-slate-700 dark:text-slate-200">Mínima (renovación endometrial).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Prioridad absoluta a su higiene y comodidad. Ten toallas, tampones o copa a mano. Cero presiones.</span></p>
+          </div>
+        </div>
+
+        <!-- Spring Secretion -->
+        <div class="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+              <span>🌱</span> 2. Primavera (Días 6-12)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-200/60 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 font-bold">Cremoso</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Seco → Leche / Loción Corporal</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Días post-regla suele haber sensación seca. Al acercarse la ovulación, el estrógeno produce un flujo blanquecino, cremoso y no elástico.
+          </p>
+          <div class="pt-1.5 border-t border-emerald-200/60 dark:border-emerald-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-emerald-700 dark:text-emerald-400 font-semibold">Subiendo a media (se abre la ventana fértil).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Si los primeros días nota resequedad en la intimidad, no es falta de deseo; usa lubricante a base de agua con delicadeza.</span></p>
+          </div>
+        </div>
+
+        <!-- Summer Secretion -->
+        <div class="p-3.5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+              <span>☀️</span> 3. Verano (Días 13-16)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-200/60 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200 font-bold">Clara de Huevo</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Clara de Huevo Elástica & Acuosa</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Transparente, elástico (se estira varios centímetros entre dedos sin romperse), muy resbaladizo. Sensación de humedad continua.
+          </p>
+          <div class="pt-1.5 border-t border-amber-200/60 dark:border-amber-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-rose-600 dark:text-rose-400 font-bold animate-pulse">MÁXIMA (Pico fértil de ovulación).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Lubricación natural biológica al 100%. Si NO buscan bebé: protección rigurosa. Si buscan bebé: son los días ideales.</span></p>
+          </div>
+        </div>
+
+        <!-- Autumn Secretion -->
+        <div class="p-3.5 rounded-2xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200/80 dark:border-purple-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+              <span>🍂</span> 4. Otoño (Días 17-28)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-200/60 dark:bg-purple-900/80 text-purple-800 dark:text-purple-200 font-bold">Espeso / Pegajoso</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Moco Denso, Pastoso o Sequedad</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            La progesterona vuelve el flujo espeso, blanco opaco o pastoso. Actúa como barrera defensiva natural en el cérvix.
+          </p>
+          <div class="pt-1.5 border-t border-purple-200/60 dark:border-purple-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-slate-700 dark:text-slate-200">Cerrada / Mínima.</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Días antes de la regla puede haber ligero manchado café (spotting normal) o sequedad; sé paciente y cariñoso.</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Semáforo Médico Íntimo -->
+      <div id="secretionsWarningBox" class="p-3.5 sm:p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
+        <div class="flex items-center gap-2">
+          <span class="text-base sm:text-lg">🚦</span>
+          <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">Semáforo de Salud Íntima (Cuándo sugerir ginecólogo)</h4>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+            <span class="font-bold text-emerald-700 dark:text-emerald-300 block mb-0.5">🟢 Normal / Saludable:</span>
+            <p class="text-slate-600 dark:text-slate-300">Transparente, blanco o cremoso sin olor penetrante ni ardor. Cambia armónicamente de textura según la fase.</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60">
+            <span class="font-bold text-amber-800 dark:text-amber-300 block mb-0.5">🟡 Atención (Posible Hongo):</span>
+            <p class="text-slate-600 dark:text-slate-300">Textura de requesón (grumos blancos) acompañada de picor o ardor. Sugiérele visitar a su médica.</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60">
+            <span class="font-bold text-rose-700 dark:text-rose-300 block mb-0.5">🔴 Alerta (Posible Infección):</span>
+            <p class="text-slate-600 dark:text-slate-300">Color verdoso, grisáceo, amarillo intenso o con olor penetrante (a pescado) o dolor pélvico. Ginecólogo prioritario.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONTHLY TACTICAL CALENDAR -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📅</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Calendario Táctico del Mes
+            </h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Mapeo mensual por colores para planear cenas, escapadas de fin de semana o eventos sin imprevistos.
+          </p>
+        </div>
+        
+        <!-- Month controls -->
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <button onclick="changeCalendarMonth(-1)" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all">
+            ◀
+          </button>
+          <span id="calendarCurrentMonthTitle" class="text-xs sm:text-sm font-extrabold min-w-[120px] text-center capitalize">
+            Mes Año
+          </span>
+          <button onclick="changeCalendarMonth(1)" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all">
+            ▶
+          </button>
+          <button onclick="goToTodayCalendar()" class="px-2 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all hover:bg-rose-100">
+            Hoy
+          </button>
+        </div>
+      </div>
+
+      <!-- Days of Week labels -->
+      <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mié</div>
+        <div>Jue</div>
+        <div>Vie</div>
+        <div>Sáb</div>
+        <div>Dom</div>
+      </div>
+
+      <!-- Calendar Days Grid -->
+      <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-1.5">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Calendar Phase Legend -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Invierno (Regla)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Primavera (Energía)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Verano (Ovulación)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Otoño (Lútea / SPM)</span>
+        </div>
+      </div>
+
+      <!-- Selected Calendar Day Detail Briefing -->
+      <div id="calendarSelectedDayCard" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- DOSSIER & NOTES SECTION -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📓</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Dossier Táctico de Personalidad & Actitudes
+            </h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Anota sus gustos, manías, detonantes y gestos que le encantan para no olvidar nunca qué le alegra la vida.
+          </p>
+        </div>
+        <button onclick="openNoteFormModal()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 self-start sm:self-auto active:scale-95 transition-all">
+          <span>➕</span>
+          <span>Añadir Anotación</span>
+        </button>
+      </div>
+
+      <!-- Filters for Notes -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs">
+        <button onclick="filterNotes('all')" class="note-filter-btn px-2.5 py-1 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900" data-filter="all">
+          Todas (<span id="countAllNotes">0</span>)
+        </button>
+        <button onclick="filterNotes('loved')" class="note-filter-btn px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="loved">
+          ❤️ Le Encantó
+        </button>
+        <button onclick="filterNotes('trigger')" class="note-filter-btn px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="trigger">
+          💣 Detonante
+        </button>
+        <button onclick="filterNotes('craving')" class="note-filter-btn px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="craving">
+          🍫 Antojo Clave
+        </button>
+        <button onclick="filterNotes('quirk')" class="note-filter-btn px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="quirk">
+          💡 Manía / Rasgo
+        </button>
+      </div>
+
+      <!-- Notes Grid Container -->
+      <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- CRISIS TRANSLATOR SECTION -->
+    <section id="translatorSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <span class="text-xl">🗣️</span>
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">
+            Traductor Táctico: ¿Qué responder cuando dice...?
+          </h3>
+          <p class="text-xs text-slate-500">Decodificador masculino de frases comunes y respuestas de alto impacto.</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Selecciona la frase o situación:</label>
+          <select id="phraseSelect" onchange="renderTranslation()" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <option value="fine">1. "No me pasa nada, déjame."</option>
+            <option value="dinner">2. "No sé qué quiero cenar... elige tú lo que sea."</option>
+            <option value="ugly">3. "Hoy me siento fea y nada me queda bien."</option>
+            <option value="busy">4. "¿Estás ocupado o podemos hablar dos minutos?"</option>
+            <option value="plans">5. "¿Tenemos algún plan este fin de semana?"</option>
+          </select>
+        </div>
+
+        <div id="translationOutput" class="p-3.5 sm:p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FUTURE DATE SIMULATOR & ICAL EXPORT -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔮</span>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">
+              Calculadora del Futuro (Citas, Viajes & Boda)
+            </h3>
+            <p class="text-xs text-slate-500">Conoce con antelación en qué fase estará para agendar el plan idóneo.</p>
+          </div>
+        </div>
+        <button onclick="exportCycleToICal()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all self-start sm:self-auto">
+          <span>📅</span>
+          <span>Exportar Calendario (.ics)</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+        <div class="sm:col-span-2 space-y-1">
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Elige una fecha futura:</label>
+          <input type="date" id="simDateInput" onchange="runSimulation()" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500">
+        </div>
+        <div>
+          <button onclick="setSimToQuick(7)" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all">
+            Próximo Fin de Semana
+          </button>
+        </div>
+      </div>
+
+      <div id="simResultCard" class="p-3.5 rounded-2xl bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-4xl mx-auto px-4 py-8 text-center text-xs text-slate-400 space-y-1.5">
+    <p class="font-semibold text-slate-500 dark:text-slate-400">Prometido Pro — Creado para acompañarla con empatía, amor y ciencia.</p>
+    <p class="text-[11px]">Tu información se guarda de manera segura y privada para que no se pierdan tus notas ni el seguimiento.</p>
+  </footer>
+
+  <!-- MODALS CONTAINER -->
+
+  <!-- 1. Generic Detail Modal (Battery, Sensitivity, Craving, Secretion, SOS) -->
+  <div id="genericModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div id="modalIcon" class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl font-bold">
+            💡
+          </div>
+          <h3 id="modalTitle" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 leading-snug">
+            Detalle
+          </h3>
+        </div>
+        <button onclick="closeGenericModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center text-sm font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div id="modalMsg" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <!-- Injected dynamic message -->
+      </div>
+
+      <div class="pt-2">
+        <button onclick="closeGenericModal()" class="w-full py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs shadow-sm">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Cycle Configuration Modal -->
+  <div id="configModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚙️</span>
+          <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Configuración del Ciclo</h3>
+        </div>
+        <button onclick="closeConfigModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <form id="configForm" onsubmit="saveConfiguration(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Nombre de tu prometida:</label>
+          <input type="text" id="cfgFiancéeName" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Primer día de su último periodo (sangrado):</label>
+          <input type="date" id="cfgLastPeriodDate" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <p class="text-[11px] text-slate-400">Si no recuerdas el día exacto, puedes colocar una fecha aproximada y corregirla cuando empiece.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">Duración ciclo (días):</label>
+            <input type="number" id="cfgCycleLength" min="20" max="45" value="28" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+            <span class="text-[10px] text-slate-400">Normal: 26 - 32 días</span>
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">Días de sangrado:</label>
+            <input type="number" id="cfgPeriodDuration" min="2" max="10" value="5" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+            <span class="text-[10px] text-slate-400">Normal: 4 - 6 días</span>
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeConfigModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 transition-all">
+            Cancelar
+          </button>
+          <button type="button" onclick="saveConfiguration()" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm transition-all active:scale-95">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Add Note / Personality Entry Modal -->
+  <div id="noteModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📝</span>
+          <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Nueva Anotación en Dossier</h3>
+        </div>
+        <button onclick="closeNoteFormModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <form id="noteForm" onsubmit="saveNoteEntry(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Categoría:</label>
+          <select id="noteCategory" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+            <option value="loved">❤️ Le Encantó (Detalle o gesto que amó)</option>
+            <option value="trigger">💣 Detonante (Cosa que evitar a toda costa)</option>
+            <option value="craving">🍫 Antojo Clave (Comida o snack favorito)</option>
+            <option value="quirk">💡 Manía / Rasgo de Personalidad</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Fase biológica asociada:</label>
+          <select id="notePhase" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+            <option value="current">Fase Actual del Ciclo</option>
+            <option value="all">Aplica Siempre (Personalidad fija)</option>
+            <option value="winter">Invierno (Menstrual / Dolor / Manta)</option>
+            <option value="spring">Primavera (Folicular / Aventuras)</option>
+            <option value="summer">Verano (Ovulatoria / Romance)</option>
+            <option value="autumn">Otoño (Lútea / SPM / Sensibilidad)</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Título / Qué pasó o qué descubriste:</label>
+          <input type="text" id="noteTitle" required placeholder="Ej. El té de jengibre con limón le calma los cólicos" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Detalle o nota táctica:</label>
+          <textarea id="noteContent" rows="3" placeholder="Apunta detalles: marcas favoritas, qué palabras usar, cómo reaccionar..." class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100"></textarea>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeNoteFormModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm">
+            Guardar Nota
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. PWA Installation Instructions Modal -->
+  <div id="installModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl font-bold">
+            📲
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Instalar en tu Celular</h3>
+            <p class="text-[11px] text-slate-400">Sin tiendas ni pagos, directo en tu pantalla de inicio.</p>
+          </div>
+        </div>
+        <button onclick="closeInstallModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+          <strong class="text-slate-800 dark:text-slate-100 block flex items-center gap-1.5">
+            <span>🍏</span> En iPhone (Safari):
+          </strong>
+          <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 pl-1">
+            <li>Abre esta página en el navegador <strong>Safari</strong>.</li>
+            <li>Toca el botón <strong>Compartir</strong> (el cuadro con una flecha hacia arriba).</li>
+            <li>Baja y selecciona <strong>"Agregar al inicio"</strong> (o "Añadir a pantalla de inicio").</li>
+          </ol>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+          <strong class="text-slate-800 dark:text-slate-100 block flex items-center gap-1.5">
+            <span>🤖</span> En Android (Chrome):
+          </strong>
+          <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 pl-1">
+            <li>Abre este enlace en <strong>Google Chrome</strong>.</li>
+            <li>Toca los tres puntos de la esquina superior derecha <strong>(⋮)</strong>.</li>
+            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="closeInstallModal()" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm">
+          ¡Listo, entendido!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE CLOUD PERSISTENCE & REAL-TIME SYNC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global variables injected by platform environment or fallback
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'prometido-pro-crm';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let isCloudReady = false;
+    let initialLoadDone = false;
+
+    // Check if configuration exists
+    const rawFirebaseConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+    
+    if (rawFirebaseConfig) {
+      try {
+        const firebaseConfig = JSON.parse(rawFirebaseConfig);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (err) {
+            console.warn("Auth token fallback to anonymous:", err);
+            await signInAnonymously(auth);
+          }
+        };
+
+        initAuth().then(() => {
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              currentUser = user;
+              isCloudReady = true;
+              setupCloudListener(user.uid);
+            }
+          });
+        });
+      } catch (err) {
+        console.error("Error initializing Firebase:", err);
+        updateSyncStatusUI('offline', 'Modo Local');
+      }
+    } else {
+      updateSyncStatusUI('offline', 'Modo Local');
+    }
+
+    function updateSyncStatusUI(status, label) {
+      const badge = document.getElementById('syncStatusBadge');
+      const text = document.getElementById('syncStatusText');
+      if (!badge || !text) return;
+
+      if (status === 'synced') {
+        badge.className = 'hidden sm:flex items-center gap-1.5 text-[10px] font-mono px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span id="syncStatusText">' + (label || 'Nube Conectada') + '</span>';
+      } else if (status === 'saving') {
+        badge.className = 'hidden sm:flex items-center gap-1.5 text-[10px] font-mono px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-spin"></span><span id="syncStatusText">' + (label || 'Guardando...') + '</span>';
+      } else {
+        badge.className = 'hidden sm:flex items-center gap-1.5 text-[10px] font-mono px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700';
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span><span id="syncStatusText">' + (label || 'Guardado Local') + '</span>';
+      }
+    }
+
+    function setupCloudListener(userId) {
+      if (!db || !userId) return;
+      
+      // Strict rule: artifacts/{appId}/users/{userId}/{collectionName}/{docId}
+      const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'userData', 'crmState');
+      
+      onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data();
+          // Only overwrite local memory on first startup so user's manual edits are never rolled back
+          if (!initialLoadDone) {
+            if (cloudData.config && cloudData.config.lastPeriodDate) {
+              window.config = { ...window.DEFAULT_CONFIG, ...cloudData.config };
+            }
+            if (Array.isArray(cloudData.notes)) {
+              window.notes = cloudData.notes;
+            }
+            if (cloudData.completedMissions) {
+              window.completedMissions = cloudData.completedMissions;
+            }
+            initialLoadDone = true;
+            window.updateDashboard();
+          }
+          updateSyncStatusUI('synced', 'Nube Conectada');
+        } else {
+          // If first time, push initial state to cloud
+          saveStateToCloud();
+          initialLoadDone = true;
+        }
+      }, (error) => {
+        console.warn("Snapshot listener fallback:", error);
+        updateSyncStatusUI('offline', 'Modo Local');
+      });
+    }
+
+    async function saveStateToCloud() {
+      if (!isCloudReady || !db || !currentUser) {
+        // Fallback to local session storage
+        window.saveToLocalStorageFallback();
+        return;
+      }
+
+      updateSyncStatusUI('saving', 'Subiendo a la nube...');
+      try {
+        const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'userData', 'crmState');
+        const payload = {
+          config: window.config,
+          notes: window.notes,
+          completedMissions: window.completedMissions,
+          updatedAt: new Date().toISOString()
+        };
+        await setDoc(userDocRef, payload, { merge: true });
+        updateSyncStatusUI('synced', 'Guardado en la Nube');
+      } catch (err) {
+        console.error("Cloud save failed:", err);
+        window.saveToLocalStorageFallback();
+        updateSyncStatusUI('offline', 'Guardado Local');
+      }
+    }
+
+    // Expose cloud save function globally so existing events can call it
+    window.saveStateToCloud = saveStateToCloud;
+    window.updateSyncStatusUI = updateSyncStatusUI;
+  </script>
+
+  <!-- JAVASCRIPT LOGIC & STATE ENGINE -->
+  <script>
+    // Cycle Phases Catalog with Male-Friendly Metaphors & Cervical Secretions
+    const PHASES = {
+      winter: {
+        id: 'winter',
+        title: 'Fase Menstrual (Invierno)',
+        alias: 'Modo Manta, Calma y Mimos',
+        daysDesc: 'Días 1 a 5 aprox.',
+        battery: '20% - 40%',
+        sensitivity: 'Alta (Física y Emocional)',
+        craving: 'Chocolate amargo, sopitas calientes, pasta y descanso',
+        secretionBadge: '🩸 Sangrado Menstrual',
+        secretionTitle: 'Flujo Sanguíneo Activo (Desprendimiento)',
+        secretionDesc: 'Rojo brillante a marrón oscuro. El moco cervical está oculto por el sangrado. Cero fertilidad funcional.',
+        secretionAdvice: 'Ten productos de higiene a la mano (toallas, tampones o su copa). Bríndale comodidad absoluta, té caliente y comprensión.',
+        shield: '🛡️ Zona de Resguardo',
+        shieldClass: 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/30',
+        cardClass: 'phase-glow-winter bg-gradient-to-br from-rose-50/90 to-amber-50/60 dark:from-slate-900/90 dark:to-rose-950/30 border-rose-200 dark:border-rose-900/60',
+        goldenRule: 'No la hagas tomar decisiones complicadas hoy. Prepara cobijas, agua caliente y déjala descansar sin culpas.',
+        summary: 'La progesterona y el estrógeno están en su punto más bajo. Su útero está haciendo un trabajo pesado y puede haber dolor, fatiga e inflamación.',
+        dos: [
+          'Ofrécele una compresa o bolsa de agua caliente en el vientre.',
+          'Ten a mano sus analgésicos o infusiones (manzanilla/jengibre).',
+          'Toma la iniciativa con tareas domésticas sin que tenga que pedirlo.',
+          'Proponle plan sillón, serie o película con snacks ricos.'
+        ],
+        donts: [
+          'NUNCA preguntes "¿Por qué estás de mal humor?" ni menciones la regla en tono de queja.',
+          'No le organices una fiesta sorpresa o salidas agotadoras.',
+          'No le digas "no es para tanto" o "a ti siempre te duele todo".',
+          'Evita debates existenciales o discusiones sobre presupuestos hoy.'
+        ],
+        missions: [
+          { id: 'w1', text: 'Sorprenderla con su postre o infusión caliente favorita sin que lo pida.' },
+          { id: 'w2', text: 'Darle un masaje suave en pies o espalda baja durante 10 minutos.' },
+          { id: 'w3', text: 'Hacerte cargo 100% de la cena de hoy (cocinar o pedir a domicilio).' }
+        ]
+      },
+      spring: {
+        id: 'spring',
+        title: 'Fase Folicular (Primavera)',
+        alias: 'Modo Superpoderes y Nuevas Aventuras',
+        daysDesc: 'Días 6 a 12 aprox.',
+        battery: '70% - 95%',
+        sensitivity: 'Baja / Positiva',
+        craving: 'Ensaladas frescas, mariscos, comida ligera, cócteles',
+        secretionBadge: '🌱 Seco a Cremoso',
+        secretionTitle: 'Moco Cremoso / Textura Loción',
+        secretionDesc: 'Al inicio post-regla hay sensación seca. Conforme sube el estrógeno, el flujo se vuelve blanco lechoso o cremoso. Fertilidad en ascenso.',
+        secretionAdvice: 'Al inicio puede haber menor lubricación natural; ten paciencia. Con los días aumentará su hidratación y deseo.',
+        shield: '🚀 Batería Máxima',
+        shieldClass: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
+        cardClass: 'phase-glow-spring bg-gradient-to-br from-emerald-50/90 to-teal-50/60 dark:from-slate-900/90 dark:to-emerald-950/30 border-emerald-200 dark:border-emerald-900/60',
+        goldenRule: 'Es la mejor época para planear viajes, probar restaurantes nuevos, hacer ejercicio juntos y conversar sobre el futuro.',
+        summary: 'El estrógeno comienza a subir a toda velocidad. Vuelve su vitalidad, optimismo, claridad mental y creatividad.',
+        dos: [
+          'Invítala a salir a un lugar nuevo o a hacer una actividad al aire libre.',
+          'Habla de proyectos que tengan como pareja: boda, vacaciones, metas.',
+          'Acompáñala en sus ideas espontáneas; su creatividad está al 100%.',
+          'Dile lo radiante y bien que se ve (lo notará de inmediato).'
+        ],
+        donts: [
+          'No te quedes encerrado en la cueva cuando ella tenga ganas de comerse el mundo.',
+          'No frenes su entusiasmo con comentarios pesimistas.',
+          'No dejes pasar esta ventana para tener citas divertidas.'
+        ],
+        missions: [
+          { id: 'sp1', text: 'Invitarla a una cita fuera de la rutina (cine, café lindo, caminata).' },
+          { id: 'sp2', text: 'Preguntarle qué proyectos o ideas tiene en mente y escucharla con interés.' },
+          { id: 'sp3', text: 'Tomarle una foto linda espontánea y mandársela diciéndole lo hermosa que está.' }
+        ]
+      },
+      summer: {
+        id: 'summer',
+        title: 'Fase Ovulatoria (Verano)',
+        alias: 'Modo Diosa / Alta Confianza y Magnetismo',
+        daysDesc: 'Días 13 a 16 aprox.',
+        battery: '95% - 100%',
+        sensitivity: 'Empática y Conectada',
+        craving: 'Cenas elegantes, sabores intensos, aperitivos sociales',
+        secretionBadge: '☀️ Clara de Huevo',
+        secretionTitle: 'Clara de Huevo Elástica (Máxima Fertilidad)',
+        secretionDesc: 'Transparente, elástico y muy resbaladizo. Diseñado por la naturaleza para que los espermatozoides naden fácilmente hacia el óvulo.',
+        secretionAdvice: 'Lubricación natural en su punto máximo. ¡Cuidado máximo si no buscan embarazo! Si están buscando concebir, son los días clave.',
+        shield: '🔥 Clímax Energético',
+        shieldClass: 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30',
+        cardClass: 'phase-glow-summer bg-gradient-to-br from-amber-50/90 to-orange-50/60 dark:from-slate-900/90 dark:to-amber-950/30 border-amber-200 dark:border-amber-900/60',
+        goldenRule: 'Máxima conexión romántica y química. Ponte tu mejor perfume, arréglate bien y sé su fan número uno.',
+        summary: 'Pico de estrógeno y liberación del óvulo. Su piel brilla, su confianza está por las nubes y busca contacto afectivo profundo.',
+        dos: [
+          'Ponte coqueto y detallista: arréglate para ella, usa la colonia que le gusta.',
+          'Salgan con amigos o a eventos sociales; brillará en cualquier reunión.',
+          'Sorpréndela con flores sin ningún motivo aparente.',
+          'Exprésale cuánto la admiras y deseas compartir tu vida con ella.'
+        ],
+        donts: [
+          'No seas descuidado con tu apariencia estos días.',
+          'No ignores sus muestras de cariño o coqueteo.',
+          'Si no están buscando embarazo ahora mismo, ¡precaución máxima de fertilidad!'
+        ],
+        missions: [
+          { id: 'su1', text: 'Vestirte elegante para verla o ponerte su loción favorita.' },
+          { id: 'su2', text: 'Comprarle unas flores o una nota romántica escrita a mano.' },
+          { id: 'su3', text: 'Planear una noche íntima con velas o comida deliciosa.' }
+        ]
+      },
+      autumn: {
+        id: 'autumn',
+        title: 'Fase Lútea / SPM (Otoño)',
+        alias: 'Protocolo Paz Armada & Apoyo Incondicional',
+        daysDesc: 'Días 17 a 28 aprox.',
+        battery: '30% - 60% (Bajando)',
+        sensitivity: 'MUY ALTA (Detector de fallas activado)',
+        craving: 'Papas fritas, hamburguesas, chocolate, helado, salado y dulce a la vez',
+        secretionBadge: '🍂 Espeso / Pegajoso',
+        secretionTitle: 'Moco Denso o Pastoso (Tapón Protector)',
+        secretionDesc: 'Blanco opaco o amarillento suave, pegajoso o sensación de sequedad. La progesterona sella el cuello uterino para protegerlo.',
+        secretionAdvice: 'Puede haber mayor sequedad o sensibilidad. Días antes de la regla puede haber ligero manchado marrón (spotting normal).',
+        shield: '⚠️ Alto Voltaje Emocional',
+        shieldClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30',
+        cardClass: 'phase-glow-autumn bg-gradient-to-br from-purple-50/90 to-rose-50/60 dark:from-slate-900/90 dark:to-purple-950/30 border-purple-200 dark:border-purple-900/60',
+        goldenRule: 'Cualquier cosa que digas puede y será usada en tu contra. Respira hondo, ten paciencia de monje budista y mantén la despensa abastecida.',
+        summary: 'La progesterona sube y luego cae abruptamente. Puede haber hinchazón, cambios bruscos de humor, cansancio y antojos voraces.',
+        dos: [
+          'Abastécete con sus antojos antes de que ella note que los quiere.',
+          'Valida sus emociones: "Es completamente comprensible que te sientas así".',
+          'Si la notas saturada, quítale peso de decisiones cotidianas.',
+          'Sé su refugio seguro, no un contendiente más en el ring.'
+        ],
+        donts: [
+          'PROHIBIDO decir: "¿Estás así porque te va a bajar?" (Peligro crítico de discusión).',
+          'No le preguntes a las 9pm con hambre: "¿Qué cenamos?". Dale opciones concretas: "¿Pedimos sushi o pizza?".',
+          'No dejes ropa tirada o platos sucios en el fregadero; su tolerancia al desorden es cero.',
+          'No intentes resolver sus problemas emocionales con lógica fría; solo escucha.'
+        ],
+        missions: [
+          { id: 'au1', text: 'Rellenar la alacena con su antojo preferido (salado o dulce).' },
+          { id: 'au2', text: 'Ordenar la habitación o la sala sin que nadie te lo pida.' },
+          { id: 'au3', text: 'Darle un abrazo largo de oso en silencio cuando suspire hondo.' }
+        ]
+      }
+    };
+
+    // Default configuration (Safe initial values)
+    const DEFAULT_CONFIG = {
+      fiancéeName: 'Mi Prometida',
+      lastPeriodDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      cycleLength: 28,
+      periodDuration: 5,
+      notificationsEnabled: false,
+      notificationTime: '08:30',
+      lastNotificationSentDate: null
+    };
+
+    // Default personality notes
+    const DEFAULT_NOTES = [
+      {
+        id: 'n1',
+        category: 'loved',
+        phase: 'winter',
+        title: 'Bolsa de agua caliente + té de manzanilla',
+        content: 'Cuando tiene cólicos el día 1 o 2, prepararle el té sin que lo pida la hace sentir súper cuidada.'
+      },
+      {
+        id: 'n2',
+        category: 'trigger',
+        phase: 'autumn',
+        title: 'Preguntarle qué quiere cenar sin opciones',
+        content: 'En la fase lútea le da parálisis de decisión y hambre repentina. Es mejor proponer: "¿Quieres hamburguesa o comida china?".'
+      },
+      {
+        id: 'n3',
+        category: 'craving',
+        phase: 'autumn',
+        title: 'Papas fritas con sal y helado de vainilla',
+        content: 'Le encanta mezclar lo salado y lo dulce cuando está en los días previos a la regla.'
+      },
+      {
+        id: 'n4',
+        category: 'quirk',
+        phase: 'all',
+        title: 'Pies fríos crónicos al acostarse',
+        content: 'Siempre tiene los pies helados. Calentar la cama o dejarle medias a mano suma 100 puntos.'
+      }
+    ];
+
+    let config = { ...DEFAULT_CONFIG };
+    let notes = [...DEFAULT_NOTES];
+    let completedMissions = {};
+    let calendarDate = new Date();
+    let currentNoteFilter = 'all';
+
+    // Expose them to window for module access
+    window.DEFAULT_CONFIG = DEFAULT_CONFIG;
+    window.config = config;
+    window.notes = notes;
+    window.completedMissions = completedMissions;
+
+    function playChime(type) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (type === 'success') {
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else {
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(554.37, now + 0.1);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {
+        // AudioContext disabled or blocked by policy
+      }
+    }
+
+    // Robust Date Difference function immune to Timezone / DST offsets
+    function getDaysDifference(dateStr1, dateObj2) {
+      if (!dateStr1) return 0;
+      // dateStr1 is 'YYYY-MM-DD'
+      const parts1 = dateStr1.split('-').map(Number);
+      if (parts1.length < 3 || isNaN(parts1[0])) return 0;
+      const utc1 = Date.UTC(parts1[0], parts1[1] - 1, parts1[2]);
+      
+      const y2 = dateObj2.getFullYear();
+      const m2 = dateObj2.getMonth();
+      const d2 = dateObj2.getDate();
+      const utc2 = Date.UTC(y2, m2, d2);
+
+      const msPerDay = 1000 * 60 * 60 * 24;
+      return Math.floor((utc2 - utc1) / msPerDay);
+    }
+
+    function calculateCycleState(targetDate = new Date()) {
+      const cycleLen = parseInt(window.config.cycleLength, 10) || 28;
+      const periodDur = parseInt(window.config.periodDuration, 10) || 5;
+      const lastDateStr = window.config.lastPeriodDate || new Date().toISOString().split('T')[0];
+
+      const diffDays = getDaysDifference(lastDateStr, targetDate);
+
+      // Modulo that correctly handles negative numbers if targetDate is before lastPeriodDate
+      let dayInCycle = ((diffDays % cycleLen) + cycleLen) % cycleLen + 1;
+
+      let phaseKey = 'autumn';
+      if (dayInCycle <= periodDur) {
+        phaseKey = 'winter';
+      } else if (dayInCycle <= Math.floor(cycleLen * 0.44)) {
+        phaseKey = 'spring';
+      } else if (dayInCycle <= Math.floor(cycleLen * 0.58)) {
+        phaseKey = 'summer';
+      } else {
+        phaseKey = 'autumn';
+      }
+
+      return {
+        dayInCycle,
+        cycleLen,
+        phase: PHASES[phaseKey],
+        targetDate
+      };
+    }
+
+    function updateDashboard() {
+      const state = calculateCycleState(new Date());
+      const p = state.phase;
+
+      // Badges
+      const nameEl = document.getElementById('badgeFiancéeName');
+      if (nameEl) nameEl.textContent = `Prometida: ${window.config.fiancéeName}`;
+
+      const cycleDayEl = document.getElementById('badgeCycleDay');
+      if (cycleDayEl) cycleDayEl.textContent = `Día ${state.dayInCycle} de ${state.cycleLen}`;
+
+      // Status Shield
+      const shield = document.getElementById('statusShield');
+      if (shield) {
+        shield.textContent = p.shield;
+        shield.className = `text-xs font-semibold px-2.5 py-1 rounded-full border ${p.shieldClass}`;
+      }
+
+      // Headline
+      const phaseTitle = document.getElementById('phaseTitle');
+      if (phaseTitle) phaseTitle.textContent = p.title;
+
+      const phaseSub = document.getElementById('phaseSubtitle');
+      if (phaseSub) phaseSub.textContent = `${p.alias} — ${p.summary}`;
+
+      // Metric Tiles
+      const statBat = document.getElementById('statBattery');
+      if (statBat) statBat.textContent = p.battery;
+
+      const statSens = document.getElementById('statSensitivity');
+      if (statSens) statSens.textContent = p.sensitivity;
+
+      const statCrav = document.getElementById('statCraving');
+      if (statCrav) statCrav.textContent = p.craving;
+
+      const statSec = document.getElementById('statSecretion');
+      if (statSec) statSec.textContent = p.secretionBadge;
+
+      const golden = document.getElementById('goldenRuleText');
+      if (golden) golden.textContent = `"${p.goldenRule}"`;
+
+      // Hero Glow
+      const hero = document.getElementById('heroCard');
+      if (hero) hero.className = `relative overflow-hidden rounded-3xl p-4 sm:p-7 transition-all duration-300 border glass-card shadow-sm ${p.cardClass}`;
+
+      renderMissions(p);
+      renderCalendar();
+      renderNotes();
+      renderTranslation();
+    }
+
+    function renderMissions(phase) {
+      const container = document.getElementById('missionsContainer');
+      container.innerHTML = '';
+
+      let completedCount = 0;
+      phase.missions.forEach((m) => {
+        const isDone = !!completedMissions[m.id];
+        if (isDone) completedCount++;
+
+        const item = document.createElement('div');
+        item.className = `p-3 sm:p-3.5 rounded-2xl border transition-all flex items-start gap-3 cursor-pointer ${
+          isDone
+            ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800'
+            : 'bg-white/80 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 hover:border-rose-300'
+        }`;
+
+        item.innerHTML = `
+          <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleMission('${m.id}')" class="mt-0.5 w-4 h-4 rounded text-rose-600 focus:ring-rose-500 cursor-pointer">
+          <div class="flex-1" onclick="toggleMission('${m.id}')">
+            <p class="text-xs sm:text-sm font-semibold ${isDone ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'}">
+              ${m.text}
+            </p>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isDone ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}">
+            ${isDone ? '+50 Pts Prometido' : 'Pendiente'}
+          </span>
+        `;
+        container.appendChild(item);
+      });
+
+      document.getElementById('missionCounter').textContent = `${completedCount}/${phase.missions.length} completadas`;
+    }
+
+    function toggleMission(id) {
+      window.completedMissions[id] = !window.completedMissions[id];
+      if (window.completedMissions[id]) playChime('success');
+      else playChime('pop');
+      saveAppState();
+      const state = calculateCycleState(new Date());
+      renderMissions(state.phase);
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+
+      const monthNames = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      ];
+      document.getElementById('calendarCurrentMonthTitle').textContent = `${monthNames[month]} ${year}`;
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+
+      // Start on Monday (0 is Monday, 6 is Sunday)
+      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
+      if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+      // Empty days before start
+      for (let i = 0; i < startDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'h-14 sm:h-16 rounded-xl bg-slate-100/30 dark:bg-slate-900/20 border border-transparent';
+        grid.appendChild(emptyCell);
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+        const thisDate = new Date(year, month, day);
+        const cycleState = calculateCycleState(thisDate);
+        const isToday = thisDate.getTime() === today.getTime();
+
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.onclick = () => selectCalendarDate(thisDate);
+
+        let phaseColor = 'bg-slate-100 border-slate-200 text-slate-700';
+        let phaseEmoji = '🩸';
+
+        if (cycleState.phase.id === 'winter') {
+          phaseColor = 'bg-rose-100/70 dark:bg-rose-950/40 border-rose-300 dark:border-rose-900 text-rose-800 dark:text-rose-200';
+          phaseEmoji = '🩸';
+        } else if (cycleState.phase.id === 'spring') {
+          phaseColor = 'bg-emerald-100/70 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-900 text-emerald-800 dark:text-emerald-200';
+          phaseEmoji = '🌱';
+        } else if (cycleState.phase.id === 'summer') {
+          phaseColor = 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-900 text-amber-800 dark:text-amber-200';
+          phaseEmoji = '☀️';
+        } else if (cycleState.phase.id === 'autumn') {
+          phaseColor = 'bg-purple-100/70 dark:bg-purple-950/40 border-purple-300 dark:border-purple-900 text-purple-800 dark:text-purple-200';
+          phaseEmoji = '🍂';
+        }
+
+        cell.className = `h-14 sm:h-16 p-1 rounded-xl border flex flex-col justify-between items-center transition-all hover:scale-105 active:scale-95 touch-manipulation ${phaseColor} ${
+          isToday ? 'ring-2 ring-rose-500 shadow-md font-extrabold' : ''
+        }`;
+
+        cell.innerHTML = `
+          <div class="w-full flex items-center justify-between text-[10px]">
+            <span class="font-bold">${day}</span>
+            <span class="text-[9px] font-mono opacity-70">D${cycleState.dayInCycle}</span>
+          </div>
+          <span class="text-xs sm:text-sm">${phaseEmoji}</span>
+          <span class="text-[8px] uppercase font-bold tracking-tighter truncate w-full text-center">
+            ${isToday ? '★ Hoy' : cycleState.phase.id}
+          </span>
+        `;
+
+        grid.appendChild(cell);
+      }
+
+      // Default selected day briefing
+      selectCalendarDate(today);
+    }
+
+    function selectCalendarDate(dateObj) {
+      const state = calculateCycleState(dateObj);
+      const p = state.phase;
+      const formatted = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+      const card = document.getElementById('calendarSelectedDayCard');
+      card.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400">Diagnóstico Táctico para:</span>
+            <h4 class="font-bold text-sm sm:text-base capitalize text-slate-800 dark:text-slate-100">${formatted}</h4>
+          </div>
+          <div class="flex items-center gap-1.5 self-start sm:self-auto">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              Día ${state.dayInCycle} del Ciclo
+            </span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-md ${p.shieldClass}">
+              ${p.title}
+            </span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-slate-600 dark:text-slate-300">
+          <div>
+            <p><strong>Batería prevista:</strong> ${p.battery}</p>
+            <p><strong>Sensibilidad:</strong> ${p.sensitivity}</p>
+          </div>
+          <div>
+            <p><strong>Flujo estimado:</strong> ${p.secretionBadge}</p>
+            <p><strong>Consejo de prometido:</strong> ${p.goldenRule}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function changeCalendarMonth(delta) {
+      calendarDate.setMonth(calendarDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function goToTodayCalendar() {
+      calendarDate = new Date();
+      renderCalendar();
+    }
+
+    function renderNotes() {
+      const container = document.getElementById('notesContainer');
+      container.innerHTML = '';
+
+      const filtered = notes.filter(n => {
+        if (currentNoteFilter === 'all') return true;
+        return n.category === currentNoteFilter;
+      });
+
+      document.getElementById('countAllNotes').textContent = notes.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+            No hay anotaciones en esta categoría todavía. ¡Haz clic en "Añadir Anotación" para guardar un gesto, antojo o detonante!
+          </div>
+        `;
+        return;
+      }
+
+      const catBadges = {
+        loved: { label: '❤️ Le Encantó', class: 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' },
+        trigger: { label: '💣 Detonante', class: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' },
+        craving: { label: '🍫 Antojo Clave', class: 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300' },
+        quirk: { label: '💡 Manía / Rasgo', class: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' }
+      };
+
+      filtered.forEach((n) => {
+        const cat = catBadges[n.category] || catBadges.loved;
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2 relative group shadow-xs';
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${cat.class}">
+              ${cat.label}
+            </span>
+            <button onclick="deleteNote('${n.id}')" class="text-slate-400 hover:text-rose-600 text-xs font-bold p-1 rounded transition-colors" title="Eliminar nota">
+              ✕
+            </button>
+          </div>
+          <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug">
+            ${n.title}
+          </h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            ${n.content}
+          </p>
+          <div class="pt-1 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+            <span>Fase: <strong class="capitalize">${n.phase}</strong></span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterNotes(cat) {
+      currentNoteFilter = cat;
+      document.querySelectorAll('.note-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-filter') === cat) {
+          btn.className = 'note-filter-btn px-2.5 py-1 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900';
+        } else {
+          btn.className = 'note-filter-btn px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold';
+        }
+      });
+      renderNotes();
+    }
+
+    function saveNoteEntry(e) {
+      e.preventDefault();
+      const category = document.getElementById('noteCategory').value;
+      const phaseVal = document.getElementById('notePhase').value;
+      const title = document.getElementById('noteTitle').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+
+      let assignedPhase = phaseVal;
+      if (phaseVal === 'current') {
+        const state = calculateCycleState(new Date());
+        assignedPhase = state.phase.id;
+      }
+
+      const newEntry = {
+        id: 'note_' + Date.now(),
+        category,
+        phase: assignedPhase,
+        title,
+        content: content || 'Sin detalles adicionales.'
+      };
+
+      window.notes.unshift(newEntry);
+      saveAppState();
+      renderNotes();
+      closeNoteFormModal();
+      playChime('success');
+    }
+
+    function deleteNote(id) {
+      window.notes = window.notes.filter(n => n.id !== id);
+      saveAppState();
+      renderNotes();
+    }
+
+    const TRANSLATIONS = {
+      fine: {
+        raw: '"No me pasa nada, déjame."',
+        real: 'Traducción: "Me pasa todo, pero no quiero tener que explicártelo desde cero ni sentirme juzgada".',
+        danger: 'ERROR FATAL: Decir "Bueno, tú te lo pierdes" o irte a jugar videojuegos sonriendo.',
+        tactic: 'RESPUESTA RECOMENDADA: "Está bien mi amor, te doy tu espacio, pero aquí estoy si necesitas un abrazo, agua caliente o si quieres hablar después". Deja un chocolate cerca y mantente disponible.'
+      },
+      dinner: {
+        raw: '"No sé qué quiero cenar... elige tú lo que sea."',
+        real: 'Traducción: "Tengo fatiga de decisión y hambre. No me hagas pensar en 20 opciones".',
+        danger: 'ERROR FATAL: Empezar una lista abierta como "¿Quieres pizza? ¿O ensalada? ¿O tacos? ¿O qué quieres?".',
+        tactic: 'RESPUESTA RECOMENDADA: Dale una opción cerrada entre dos cosas: "Pediré sushi o hamburguesas deliciosas de ese lugar que te gusta. ¿Cuál te suena mejor hoy?".'
+      },
+      ugly: {
+        raw: '"Hoy me siento fea y nada me queda bien."',
+        real: 'Traducción: "Estoy hinchada por la retención de líquidos hormonal y mi autoestima biológica está vulnerable".',
+        danger: 'ERROR FATAL: Decir "Siempre te ves igual" (lo interpreta como que no te fijas) o intentar dar tips de ropa.',
+        tactic: 'RESPUESTA RECOMENDADA: Mírala fijamente a los ojos, dale un beso y dile con total convicción: "Para mí eres la mujer más hermosa del mundo entero, y te amo tal cual eres".'
+      },
+      busy: {
+        raw: '"¿Estás ocupado o podemos hablar dos minutos?"',
+        real: 'Traducción: "Necesito desahogarme con la persona en quien más confío. No busco que resuelvas el problema, solo que me escuches".',
+        danger: 'ERROR FATAL: Responder "Habla rápido que estoy jugando" o empezar a darle soluciones lógicas antes de validar su sentir.',
+        tactic: 'RESPUESTA RECOMENDADA: Deja el teléfono a un lado, mírala y dile: "Para ti siempre tengo tiempo. ¿Qué pasó mi amor?". Escucha con atención sin interrumpir.'
+      },
+      plans: {
+        raw: '"¿Tenemos algún plan este fin de semana?"',
+        real: 'Traducción: "Quiero sentir que piensas en nosotros y que tomas la iniciativa sin que yo tenga que organizarlo todo".',
+        danger: 'ERROR FATAL: Decir "No sé, lo que tú quieras hacer".',
+        tactic: 'RESPUESTA RECOMENDADA: "Tengo una idea linda en mente para nosotros dos, déjamelo a mí. Tú solo ponte cómoda".'
+      }
+    };
+
+    function renderTranslation() {
+      const key = document.getElementById('phraseSelect').value;
+      const t = TRANSLATIONS[key];
+      const out = document.getElementById('translationOutput');
+
+      out.innerHTML = `
+        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Significado real:</span>
+          <p class="text-xs sm:text-sm font-semibold text-rose-600 dark:text-rose-400 mt-0.5">${t.real}</p>
+        </div>
+        <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60">
+          <span class="text-[10px] uppercase font-bold text-amber-800 dark:text-amber-300 block">⚠️ Trampa común:</span>
+          <p class="text-xs text-slate-700 dark:text-slate-300 mt-0.5">${t.danger}</p>
+        </div>
+        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+          <span class="text-[10px] uppercase font-bold text-emerald-800 dark:text-emerald-300 block">💡 Jugada maestra recomendada:</span>
+          <p class="text-xs text-slate-700 dark:text-slate-300 mt-0.5">${t.tactic}</p>
+        </div>
+      `;
+    }
+
+    function runSimulation() {
+      const val = document.getElementById('simDateInput').value;
+      if (!val) return;
+      const target = new Date(val + 'T00:00:00');
+      const state = calculateCycleState(target);
+      const p = state.phase;
+
+      const out = document.getElementById('simResultCard');
+      out.innerHTML = `
+        <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+          <div>
+            <span class="text-[10px] font-bold uppercase text-slate-400">Pronóstico para ${val}:</span>
+            <h4 class="font-extrabold text-sm text-slate-800 dark:text-slate-100">${p.title}</h4>
+          </div>
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border">
+            Día ${state.dayInCycle}
+          </span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-2">${p.summary}</p>
+        <div class="mt-2 text-xs font-semibold text-rose-600 dark:text-rose-400">
+          💡 Sugerencia para esa fecha: ${p.goldenRule}
+        </div>
+      `;
+    }
+
+    function setSimToQuick(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      document.getElementById('simDateInput').value = d.toISOString().split('T')[0];
+      runSimulation();
+    }
+
+    function showStatDetail(statKey) {
+      playChime('pop');
+      const state = calculateCycleState(new Date());
+      const p = state.phase;
+      const modal = document.getElementById('genericModal');
+      const icon = document.getElementById('modalIcon');
+      const title = document.getElementById('modalTitle');
+      const msg = document.getElementById('modalMsg');
+
+      if (statKey === 'battery') {
+        icon.textContent = '🔋';
+        title.textContent = `Batería Prevista: ${p.battery}`;
+        msg.innerHTML = `
+          <div class="space-y-2 text-left">
+            <p><strong>Fase actual:</strong> ${p.title}</p>
+            <p class="leading-relaxed">${p.summary}</p>
+            <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border">
+              <strong>Consejo táctico:</strong> ${p.goldenRule}
+            </div>
+          </div>
+        `;
+      } else if (statKey === 'sensitivity') {
+        icon.textContent = '❤️';
+        title.textContent = `Sensibilidad: ${p.sensitivity}`;
+        msg.innerHTML = `
+          <div class="space-y-2 text-left">
+            <p><strong>Nivel actual:</strong> ${p.sensitivity}</p>
+            <p class="leading-relaxed">Los niveles de estrógeno y progesterona regulan los neurotransmisores cerebrales. Su sensibilidad no es exageración; responde a variaciones biológicas reales.</p>
+            <div class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200">
+              <strong>Qué hacer:</strong> Dale abrazos prolongados, valida sus emociones y no intentes rebatirla con frialdad lógica.
+            </div>
+          </div>
+        `;
+      } else if (statKey === 'craving') {
+        icon.textContent = '🍫';
+        title.textContent = `Antojo: ${p.craving}`;
+        msg.innerHTML = `
+          <div class="space-y-2 text-left">
+            <p class="leading-relaxed">Durante esta etapa el cuerpo busca combustible reconfortante para compensar la fatiga y el gasto energético.</p>
+            <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-200">
+              <strong>Recomendación:</strong> Compra su comida o snack favorito hoy sin que tenga que pedírtelo.
+            </div>
+          </div>
+        `;
+      } else if (statKey === 'secretion') {
+        icon.textContent = '💧';
+        title.textContent = `Secreción Actual: ${p.secretionBadge}`;
+        msg.innerHTML = `
+          <div class="space-y-2 text-left">
+            <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">${p.secretionTitle}</span>
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100 mt-1">${p.secretionDesc}</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-900/60 text-cyan-900 dark:text-cyan-200">
+              <span class="text-[10px] font-bold uppercase tracking-wider block">💡 Consejo para hoy:</span>
+              <p class="text-xs mt-1">${p.secretionAdvice}</p>
+            </div>
+            <button onclick="scrollToSecretionsWarning(); closeGenericModal();" class="w-full text-center py-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline block">
+              Ver Guía Completa de Secreciones ↓
+            </button>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function triggerEmergencyAction(type) {
+      playChime('pop');
+      const modal = document.getElementById('genericModal');
+      const icon = document.getElementById('modalIcon');
+      const title = document.getElementById('modalTitle');
+      const msg = document.getElementById('modalMsg');
+
+      if (type === 'cramp') {
+        icon.textContent = '🤕';
+        title.textContent = 'Auxilio: Cólicos Fuertes';
+        msg.innerHTML = `
+          <ol class="list-decimal list-inside space-y-1.5 text-left text-xs leading-relaxed">
+            <li>Llévale una compresa caliente o bolsa de agua tibia al vientre.</li>
+            <li>Ofrécele agua o infusión caliente (manzanilla, jengibre o canela).</li>
+            <li>Pregunta con delicadeza si desea que le alcances su analgésico de confianza.</li>
+            <li>Baja las luces de la habitación y no hagas ruidos molestos.</li>
+          </ol>
+        `;
+      } else if (type === 'badmood') {
+        icon.textContent = '⚡';
+        title.textContent = 'Auxilio: Tensión en el Ambiente';
+        msg.innerHTML = `
+          <ul class="list-disc list-inside space-y-1.5 text-left text-xs leading-relaxed">
+            <li><strong>REGLA 1:</strong> No te defiendas ni discutas con argumentos técnicos.</li>
+            <li>Respira hondo y di: "Entiendo que estés molesta y tienes razón en sentirte abrumada".</li>
+            <li>Pregúntale: "¿Quieres que te escuche, que te ayude a resolverlo o que te dé un abrazo en silencio?".</li>
+          </ul>
+        `;
+      } else if (type === 'hungry') {
+        icon.textContent = '🍕';
+        title.textContent = 'Auxilio: Hambre Repentina';
+        msg.innerHTML = `
+          <div class="text-left text-xs space-y-1.5 leading-relaxed">
+            <p>La bajada hormonal genera necesidad inmediata de carbohidratos y confort.</p>
+            <p><strong>Acción rápida:</strong> Dale dos opciones sencillas y pide a domicilio de inmediato sin rodeos.</p>
+          </div>
+        `;
+      } else if (type === 'sad') {
+        icon.textContent = '🥺';
+        title.textContent = 'Auxilio: Tristeza Inesperada';
+        msg.innerHTML = `
+          <div class="text-left text-xs space-y-1.5 leading-relaxed">
+            <p>La caída de estrógeno y serotonina puede producir llanto espontáneo sin motivo aparente.</p>
+            <p><strong>Acción rápida:</strong> Siéntate a su lado, abrázala sin decir "¿por qué lloras?" y dile que todo va a estar bien.</p>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeGenericModal() {
+      document.getElementById('genericModal').classList.add('hidden');
+    }
+
+    function openConfigModal() {
+      // Ensure values are properly loaded from state into inputs
+      const nameField = document.getElementById('cfgFiancéeName');
+      const dateField = document.getElementById('cfgLastPeriodDate');
+      const cycleField = document.getElementById('cfgCycleLength');
+      const periodField = document.getElementById('cfgPeriodDuration');
+
+      if (nameField) nameField.value = window.config.fiancéeName || 'Mi Prometida';
+      if (dateField) dateField.value = window.config.lastPeriodDate || new Date().toISOString().split('T')[0];
+      if (cycleField) cycleField.value = window.config.cycleLength || 28;
+      if (periodField) periodField.value = window.config.periodDuration || 5;
+
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.add('hidden');
+    }
+
+    function saveConfiguration(e) {
+      if (e && e.preventDefault) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      const nameInput = document.getElementById('cfgFiancéeName');
+      const dateInput = document.getElementById('cfgLastPeriodDate');
+      const cycleInput = document.getElementById('cfgCycleLength');
+      const periodInput = document.getElementById('cfgPeriodDuration');
+
+      const nameVal = nameInput ? nameInput.value.trim() : '';
+      const dateVal = dateInput ? dateInput.value : '';
+      const cycleVal = cycleInput ? parseInt(cycleInput.value, 10) : 28;
+      const periodVal = periodInput ? parseInt(periodInput.value, 10) : 5;
+
+      if (!dateVal) {
+        if (dateInput) dateInput.focus();
+        return false;
+      }
+
+      // Update in-memory state directly
+      window.config.fiancéeName = nameVal || 'Mi Prometida';
+      window.config.lastPeriodDate = dateVal;
+      window.config.cycleLength = !isNaN(cycleVal) && cycleVal >= 15 ? cycleVal : 28;
+      window.config.periodDuration = !isNaN(periodVal) && periodVal >= 1 ? periodVal : 5;
+
+      // Close modal immediately
+      closeConfigModal();
+
+      // Recalculate dashboard & calendar right away
+      updateDashboard();
+
+      // Update future simulator
+      if (typeof runSimulation === 'function') {
+        runSimulation();
+      }
+
+      // Persist state
+      saveAppState();
+      playChime('success');
+
+      // Visual confirmation banner
+      showToastNotification(`Ciclo actualizado: Día 1 fijado el ${dateVal}`);
+
+      return false;
+    }
+
+    function showToastNotification(text) {
+      let toast = document.getElementById('prometidoToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'prometidoToast';
+        toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-slate-900/90 text-white text-xs font-bold shadow-xl border border-slate-700/80 backdrop-blur-md transition-all duration-300 pointer-events-none opacity-0 translate-y-3';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = text;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-3');
+      }, 3000);
+    }
+
+    function openNoteFormModal() {
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteContent').value = '';
+      document.getElementById('noteModal').classList.remove('hidden');
+    }
+
+    function closeNoteFormModal() {
+      document.getElementById('noteModal').classList.add('hidden');
+    }
+
+    function openInstallModal() {
+      document.getElementById('installModal').classList.remove('hidden');
+    }
+
+    function closeInstallModal() {
+      document.getElementById('installModal').classList.add('hidden');
+    }
+
+    function scrollToSecretionsWarning() {
+      const el = document.getElementById('secretionsSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+    }
+
+    function exportCycleToICal() {
+      const start = new Date(config.lastPeriodDate + 'T00:00:00');
+      const cycleLen = parseInt(config.cycleLength) || 28;
+      let icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Prometido Pro//CRM Ciclo//ES',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH'
+      ];
+
+      for (let i = 0; i < 4; i++) {
+        const cycleStart = new Date(start.getTime() + i * cycleLen * 24 * 60 * 60 * 1000);
+        const cycleDateStr = cycleStart.toISOString().replace(/[-:]/g, '').split('T')[0];
+
+        icsContent.push('BEGIN:VEVENT');
+        icsContent.push(`UID:period-${i}-${Date.now()}@prometidopro.app`);
+        icsContent.push(`DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`);
+        icsContent.push(`DTSTART;VALUE=DATE:${cycleDateStr}`);
+        icsContent.push(`SUMMARY:🩸 ${config.fiancéeName}: Inicio de Periodo (Invierno)`);
+        icsContent.push('DESCRIPTION:Modo manta, agua caliente y chocolates. Cero decisiones difíciles hoy.');
+        icsContent.push('END:VEVENT');
+
+        // PMS reminder (Day 21)
+        const pmsStart = new Date(cycleStart.getTime() + 20 * 24 * 60 * 60 * 1000);
+        const pmsDateStr = pmsStart.toISOString().replace(/[-:]/g, '').split('T')[0];
+        icsContent.push('BEGIN:VEVENT');
+        icsContent.push(`UID:pms-${i}-${Date.now()}@prometidopro.app`);
+        icsContent.push(`DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`);
+        icsContent.push(`DTSTART;VALUE=DATE:${pmsDateStr}`);
+        icsContent.push(`SUMMARY:⚠️ ${config.fiancéeName}: Fase Lútea / SPM (Otoño)`);
+        icsContent.push('DESCRIPTION:Paciencia infinita, abrazos largos y abastecer la alacena con antojos.');
+        icsContent.push('END:VEVENT');
+      }
+
+      icsContent.push('END:VCALENDAR');
+      const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `ciclo_${window.config.fiancéeName.toLowerCase().replace(/\s+/g, '_')}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Unified save pipeline: Tries cloud first, persists locally as instant backup
+    function saveAppState() {
+      saveToLocalStorageFallback();
+      if (typeof window.saveStateToCloud === 'function') {
+        window.saveStateToCloud();
+      }
+    }
+
+    function saveToLocalStorageFallback() {
+      try {
+        const payload = {
+          config: window.config,
+          notes: window.notes,
+          completedMissions: window.completedMissions
+        };
+        // Use sessionStorage/localStorage safely as fallback
+        sessionStorage.setItem('prometido_pro_data', JSON.stringify(payload));
+        const syncText = document.getElementById('syncStatusText');
+        if (syncText && !window.isCloudReady) syncText.textContent = 'Guardado';
+      } catch (e) {
+        // Fallback
+      }
+    }
+    window.saveToLocalStorageFallback = saveToLocalStorageFallback;
+
+    function loadLocalData() {
+      try {
+        const saved = sessionStorage.getItem('prometido_pro_data');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.config) window.config = { ...DEFAULT_CONFIG, ...parsed.config };
+          if (parsed.notes) window.notes = parsed.notes;
+          if (parsed.completedMissions) window.completedMissions = parsed.completedMissions;
+        }
+      } catch (e) {
+        // Use defaults
+      }
+    }
+
+    // Expose helpers to window
+    window.updateDashboard = updateDashboard;
+    window.openConfigModal = openConfigModal;
+    window.closeConfigModal = closeConfigModal;
+    window.saveConfiguration = saveConfiguration;
+    window.openNoteFormModal = openNoteFormModal;
+    window.closeNoteFormModal = closeNoteFormModal;
+    window.saveNoteEntry = saveNoteEntry;
+    window.deleteNote = deleteNote;
+    window.filterNotes = filterNotes;
+    window.openInstallModal = openInstallModal;
+    window.closeInstallModal = closeInstallModal;
+    window.closeGenericModal = closeGenericModal;
+    window.showStatDetail = showStatDetail;
+    window.triggerEmergencyAction = triggerEmergencyAction;
+    window.toggleMission = toggleMission;
+    window.changeCalendarMonth = changeCalendarMonth;
+    window.goToTodayCalendar = goToTodayCalendar;
+    window.selectCalendarDate = selectCalendarDate;
+    window.renderTranslation = renderTranslation;
+    window.runSimulation = runSimulation;
+    window.setSimToQuick = setSimToQuick;
+    window.exportCycleToICal = exportCycleToICal;
+    window.scrollToSecretionsWarning = scrollToSecretionsWarning;
+    window.toggleDarkMode = toggleDarkMode;
+
+    window.onload = function() {
+      loadLocalData();
+      updateDashboard();
+      
+      // Auto-set simulator default date to +7 days
+      const inAWeek = new Date();
+      inAWeek.setDate(inAWeek.getDate() + 7);
+      const simInput = document.getElementById('simDateInput');
+      if (simInput) {
+        simInput.value = inAWeek.toISOString().split('T')[0];
+        runSimulation();
+      }
+    };
+  </script>
+</body>
+</html>
