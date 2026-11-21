@@ -967,6 +967,19 @@ function saveConfiguration(e) {
   }
   const cycleVal = parseInt($('cfgCycleLength').value, 10);
   const periodVal = parseInt($('cfgPeriodDuration').value, 10);
+
+  // La fecha de aquí es la CORRECCIÓN del último periodo: reemplaza a la anterior
+  // y descarta registros posteriores a ella (no pueden existir si esta es la última).
+  const oldLast = state.config.lastPeriodDate;
+  if (dateVal !== oldLast) {
+    const now = nowISO();
+    state.periodHistory = state.periodHistory.filter((d) => {
+      const drop = d === oldLast || d > dateVal;
+      if (drop) state.tombstones[`period:${d}`] = now;
+      return !drop;
+    });
+  }
+
   Object.assign(state.config, {
     fiancéeName: $('cfgFiancéeName').value.trim() || 'Mi Prometida',
     partnerLabel: $('cfgPartnerLabel').value,
