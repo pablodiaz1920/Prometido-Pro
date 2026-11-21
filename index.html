@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Prometido Pro — CRM Táctico del Ciclo Femenino</title>
+  <meta name="description" content="CRM del ciclo hormonal: fases, misiones, notas y calendario. Funciona sin internet.">
+
+  <!-- App instalable (PWA) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f43f5e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Prometido">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <!-- Tema oscuro guardado (antes de pintar, para evitar parpadeo) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('prometido_pro_theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Estilos locales (sin depender de internet) -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- Sticky Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80">
+    <div class="max-w-4xl mx-auto px-3.5 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-rose-500/30">
+          💍
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-rose-600 to-rose-500 bg-clip-text text-transparent">
+              Prometido Pro
+            </h1>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900">
+              v5.0
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Manual de Operaciones & CRM Biológico</p>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Sync Indicator -->
+        <div id="syncStatusBadge" class="flex items-center gap-1.5 text-[10px] font-mono px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700" title="Tus datos se guardan automáticamente en este celular">
+          <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          <span id="syncStatusText" class="hidden sm:inline">Cargando…</span>
+        </div>
+
+        <button id="installBtn" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 transition-all flex items-center gap-1 active:scale-95 touch-manipulation" title="Cómo instalar en tu pantalla de inicio">
+          <span>📲</span>
+          <span class="hidden sm:inline">App Celular</span>
+          <span class="sm:hidden">App</span>
+        </button>
+
+        <button id="configBtn" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1 active:scale-95 touch-manipulation">
+          <span>⚙️</span>
+          <span class="hidden sm:inline">Ajustar Ciclo</span>
+        </button>
+
+        <button id="themeBtn" type="button" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all active:scale-90" aria-label="Cambiar tema">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Responsive Container -->
+  <main class="max-w-4xl mx-auto px-3.5 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+
+    <!-- HERO CARD: Daily Status & Biological Radar -->
+    <section id="heroCard" class="relative overflow-hidden rounded-3xl p-4 sm:p-7 transition-all duration-300 border glass-card shadow-sm">
+      <div class="relative z-10 space-y-3 sm:space-y-4">
+        
+        <!-- Upper Metadata Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span id="badgeFiancéeName" class="text-xs font-bold px-2.5 py-1 rounded-full bg-white/90 dark:bg-slate-800/90 text-rose-700 dark:text-rose-300 shadow-sm border border-slate-200/60 dark:border-slate-700">
+              Prometida: Mi Amor
+            </span>
+            <span id="badgeCycleDay" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-900/10 dark:bg-white/10 text-slate-800 dark:text-slate-200">
+              Día 1 de 28
+            </span>
+          </div>
+          <span id="statusShield" class="text-xs font-semibold px-2.5 py-1 rounded-full border bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30">
+            🛡️ Zona de Resguardo
+          </span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="badgeNextPeriod" class="text-xs font-semibold text-slate-600 dark:text-slate-300">🩸 Próxima regla en — días</span>
+          <button id="logPeriodBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm shadow-rose-500/30 active:scale-95 transition-all touch-manipulation">
+            🩸 Le bajó hoy
+          </button>
+        </div>
+
+        <!-- Main Phase Headline -->
+        <div>
+          <h2 id="phaseTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
+            Fase Menstrual (Invierno)
+          </h2>
+          <p id="phaseSubtitle" class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm md:text-base mt-1 font-medium leading-snug sm:leading-relaxed">
+            Modo Manta, Calma y Mimos — Los niveles hormonales bajan y el útero trabaja intensamente.
+          </p>
+        </div>
+
+        <!-- 4 Fast Metrics Interactive Row (Responsive Grid with 'Ver más') -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+          <button type="button" data-stat="battery" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>🔋 Batería</span>
+              </span>
+              <span id="statBattery" class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-100 block mt-0.5">30%</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" data-stat="sensitivity" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>❤️ Sensibilidad</span>
+              </span>
+              <span id="statSensitivity" class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-slate-100 truncate block mt-0.5">Alta</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" data-stat="craving" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>🍫 Antojo</span>
+              </span>
+              <span id="statCraving" class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-slate-100 truncate block mt-0.5">Chocolate</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+
+          <button type="button" data-stat="secretion" class="p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-center transition-all active:scale-95 touch-manipulation group flex flex-col justify-between shadow-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block flex items-center justify-center gap-1">
+                <span>💧 Secreción</span>
+              </span>
+              <span id="statSecretion" class="font-extrabold text-[11px] sm:text-xs text-rose-600 dark:text-rose-400 truncate block mt-0.5">Sangrado</span>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1.5 block">Ver más ↗</span>
+          </button>
+        </div>
+
+        <!-- Golden Rule Advice Pill -->
+        <div class="mt-2 p-3 sm:p-3.5 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 flex items-start gap-2.5">
+          <span class="text-lg">👑</span>
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">Regla de Oro de Hoy:</span>
+            <p id="goldenRuleText" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug mt-0.5">
+              "No la hagas tomar decisiones complicadas hoy. Prepara cobijas, agua caliente y déjala descansar."
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- QUICK EMERGENCY SOS ACCORDION -->
+    <section class="glass-card rounded-2xl p-3 sm:p-4 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🚨</span>
+        <div>
+          <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Protocolo SOS para el Buen Prometido</h3>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">¿Situación crítica en casa? Activa una respuesta táctica inmediata:</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+        <button type="button" data-sos="cramp" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all">
+          🤕 Cólicos
+        </button>
+        <button type="button" data-sos="badmood" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900 active:scale-95 transition-all">
+          ⚡ Tensión
+        </button>
+        <button type="button" data-sos="hungry" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900 active:scale-95 transition-all">
+          🍕 Hambre Feroz
+        </button>
+        <button type="button" data-sos="sad" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 active:scale-95 transition-all">
+          🥺 Tristeza
+        </button>
+      </div>
+    </section>
+
+    <!-- MISSIONS CHECKLIST -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+            <span>🎯</span> Misiones Diarias del Buen Prometido
+          </h3>
+          <p class="text-[11px] sm:text-xs text-slate-500">Acciones de alto impacto según la fase biológica de hoy.</p>
+        </div>
+        <div class="flex items-center gap-1.5 self-start sm:self-auto">
+          <span id="missionStreak" class="hidden text-[11px] sm:text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-lg"></span>
+          <span id="missionCounter" class="text-[11px] sm:text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+            0/3 completadas
+          </span>
+        </div>
+      </div>
+
+      <div id="missionsContainer" class="space-y-2 sm:space-y-2.5">
+        <!-- Dynamic checklist injected by JS -->
+      </div>
+    </section>
+
+    <!-- DAILY LOG -->
+    <section id="dailyLogSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-3 scroll-mt-20">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><span>📝</span> Bitácora del Día</h3>
+          <p class="text-[11px] sm:text-xs text-slate-500">Cómo la viste hoy. Con unos días de registro, las estadísticas aprenden su patrón.</p>
+        </div>
+        <div class="flex items-center gap-1.5 self-start sm:self-auto">
+          <button id="logPrevBtn" type="button" aria-label="Día anterior" class="p-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">◀</button>
+          <div class="text-center min-w-[110px]">
+            <span id="logDateLabel" class="block text-xs font-extrabold capitalize">Hoy</span>
+            <span id="logDateMeta" class="block text-[10px] text-slate-400 font-mono"></span>
+          </div>
+          <button id="logNextBtn" type="button" aria-label="Día siguiente" class="p-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold disabled:opacity-30">▶</button>
+          <button id="logTodayBtn" type="button" class="hidden px-2 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold">Hoy</button>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">🩸 Flujo</span>
+          <div id="logFlow" class="flex flex-wrap gap-1.5"></div>
+          <div id="logPeriodSuggest" class="hidden p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-rose-800 dark:text-rose-200 text-[11px]">Hay sangrado fuera de la fecha prevista. ¿Empezó la regla este día?</span>
+            <button id="logPeriodSuggestBtn" type="button" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold">Registrar inicio</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1.5">
+            <span class="font-bold text-slate-600 dark:text-slate-300">💭 Estado de ánimo</span>
+            <div id="logMood" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div class="space-y-1.5">
+            <span class="font-bold text-slate-600 dark:text-slate-300">⚡ Energía</span>
+            <div id="logEnergy" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">🩺 Síntomas</span>
+          <div id="logSymptoms" class="flex flex-wrap gap-1.5"></div>
+        </div>
+        <div class="space-y-1.5">
+          <label for="logText" class="font-bold text-slate-600 dark:text-slate-300">✍️ Nota del día</label>
+          <textarea id="logText" rows="2" maxlength="500" placeholder="Ej. Hoy estaba muy cariñosa; le dolió la cabeza por la tarde…" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECRETIONS MASTER PANEL -->
+    <section id="secretionsSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl sm:text-2xl">💧</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Guía Táctica de Secreciones & Moco Cervical
+            </h3>
+            <span class="text-[10px] font-mono bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 font-bold px-2 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-900">
+              Bio-Radar
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Comprende qué tipo de flujo es natural en cada etapa, qué indica sobre su fertilidad y cómo actuar como buen compañero.
+          </p>
+        </div>
+        <button id="secretionsWarningLink" type="button" class="text-[11px] font-bold text-cyan-700 dark:text-cyan-400 self-start sm:self-auto hover:underline flex items-center gap-1">
+          <span>🩺 Semáforo Médico</span>
+        </button>
+      </div>
+
+      <!-- 4-Card Fluid Grid for Secretions across Phases -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
+        <!-- Winter Secretion -->
+        <div class="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+              <span>🩸</span> 1. Invierno (<span data-range="winter"></span>)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-200/60 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200 font-bold">Sangrado</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Flujo Menstrual Activo</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Color rojo brillante a parduzco con coágulos pequeños normales. El moco cervical está oculto por el sangrado.
+          </p>
+          <div class="pt-1.5 border-t border-rose-200/60 dark:border-rose-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-slate-700 dark:text-slate-200">Mínima (renovación endometrial).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Prioridad absoluta a su higiene y comodidad. Ten toallas, tampones o copa a mano. Cero presiones.</span></p>
+          </div>
+        </div>
+
+        <!-- Spring Secretion -->
+        <div class="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+              <span>🌱</span> 2. Primavera (<span data-range="spring"></span>)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-200/60 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 font-bold">Cremoso</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Seco → Leche / Loción Corporal</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Días post-regla suele haber sensación seca. Al acercarse la ovulación, el estrógeno produce un flujo blanquecino, cremoso y no elástico.
+          </p>
+          <div class="pt-1.5 border-t border-emerald-200/60 dark:border-emerald-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-emerald-700 dark:text-emerald-400 font-semibold">Subiendo a media (se abre la ventana fértil).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Si los primeros días nota resequedad en la intimidad, no es falta de deseo; usa lubricante a base de agua con delicadeza.</span></p>
+          </div>
+        </div>
+
+        <!-- Summer Secretion -->
+        <div class="p-3.5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+              <span>☀️</span> 3. Verano (<span data-range="summer"></span>)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-200/60 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200 font-bold">Clara de Huevo</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Clara de Huevo Elástica & Acuosa</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Transparente, elástico (se estira varios centímetros entre dedos sin romperse), muy resbaladizo. Sensación de humedad continua.
+          </p>
+          <div class="pt-1.5 border-t border-amber-200/60 dark:border-amber-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-rose-600 dark:text-rose-400 font-bold animate-pulse">MÁXIMA (Pico fértil de ovulación).</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Lubricación natural biológica al 100%. Si NO buscan bebé: protección rigurosa. Si buscan bebé: son los días ideales.</span></p>
+          </div>
+        </div>
+
+        <!-- Autumn Secretion -->
+        <div class="p-3.5 rounded-2xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200/80 dark:border-purple-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+              <span>🍂</span> 4. Otoño (<span data-range="autumn"></span>)
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-200/60 dark:bg-purple-900/80 text-purple-800 dark:text-purple-200 font-bold">Espeso / Pegajoso</span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100">Moco Denso, Pastoso o Sequedad</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            La progesterona vuelve el flujo espeso, blanco opaco o pastoso. Actúa como barrera defensiva natural en el cérvix.
+          </p>
+          <div class="pt-1.5 border-t border-purple-200/60 dark:border-purple-900/40 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
+            <p><strong>Fertilidad:</strong> <span class="text-slate-700 dark:text-slate-200">Cerrada / Mínima.</span></p>
+            <p><strong>Consejo de prometido:</strong> <span class="text-slate-700 dark:text-slate-200">Días antes de la regla puede haber ligero manchado café (spotting normal) o sequedad; sé paciente y cariñoso.</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Semáforo Médico Íntimo -->
+      <div id="secretionsWarningBox" class="p-3.5 sm:p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
+        <div class="flex items-center gap-2">
+          <span class="text-base sm:text-lg">🚦</span>
+          <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">Semáforo de Salud Íntima (Cuándo sugerir ginecólogo)</h4>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+            <span class="font-bold text-emerald-700 dark:text-emerald-300 block mb-0.5">🟢 Normal / Saludable:</span>
+            <p class="text-slate-600 dark:text-slate-300">Transparente, blanco o cremoso sin olor penetrante ni ardor. Cambia armónicamente de textura según la fase.</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60">
+            <span class="font-bold text-amber-800 dark:text-amber-300 block mb-0.5">🟡 Atención (Posible Hongo):</span>
+            <p class="text-slate-600 dark:text-slate-300">Textura de requesón (grumos blancos) acompañada de picor o ardor. Sugiérele visitar a su médica.</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60">
+            <span class="font-bold text-rose-700 dark:text-rose-300 block mb-0.5">🔴 Alerta (Posible Infección):</span>
+            <p class="text-slate-600 dark:text-slate-300">Color verdoso, grisáceo, amarillo intenso o con olor penetrante (a pescado) o dolor pélvico. Ginecólogo prioritario.</p>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+          ⚠️ Las fases y días fértiles que muestra la app son <strong>estimaciones</strong> por calendario. No son un método anticonceptivo ni sustituyen la consulta médica.
+        </p>
+      </div>
+    </section>
+
+    <!-- MONTHLY TACTICAL CALENDAR -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📅</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Calendario Táctico del Mes
+            </h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Mapeo mensual por colores para planear cenas, escapadas de fin de semana o eventos sin imprevistos.
+          </p>
+        </div>
+        
+        <!-- Month controls -->
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <button id="calPrev" type="button" aria-label="Mes anterior" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all">
+            ◀
+          </button>
+          <span id="calendarCurrentMonthTitle" class="text-xs sm:text-sm font-extrabold min-w-[120px] text-center capitalize">
+            Mes Año
+          </span>
+          <button id="calNext" type="button" aria-label="Mes siguiente" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all">
+            ▶
+          </button>
+          <button id="calToday" type="button" class="px-2 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all hover:bg-rose-100">
+            Hoy
+          </button>
+        </div>
+      </div>
+
+      <!-- Days of Week labels -->
+      <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mié</div>
+        <div>Jue</div>
+        <div>Vie</div>
+        <div>Sáb</div>
+        <div>Dom</div>
+      </div>
+
+      <!-- Calendar Days Grid -->
+      <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-1.5">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Calendar Phase Legend -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Invierno (Regla)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Primavera (Energía)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Verano (Ovulación)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Otoño (Lútea / SPM)</span>
+        </div>
+        <div class="flex items-center gap-1.5 col-span-2 sm:col-span-4">
+          <span>📍</span>
+          <span class="font-medium text-slate-600 dark:text-slate-300">Inicio de regla registrado</span>
+        </div>
+      </div>
+
+      <!-- Selected Calendar Day Detail Briefing -->
+      <div id="calendarSelectedDayCard" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section id="statsSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📊</span>
+          <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">Estadísticas de su Ciclo</h3>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Calculadas con los inicios de regla registrados y la bitácora diaria.</p>
+      </div>
+      <div id="statsTiles" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <div class="space-y-1">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">Duración de cada ciclo (días)</h4>
+        <div id="cycleChart"></div>
+      </div>
+      <div class="space-y-1.5">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">Lo más frecuente en cada fase</h4>
+        <div id="phaseInsights" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
+      <details class="group">
+        <summary class="cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200 select-none">📍 Historial de reglas registradas <span class="text-slate-400 font-normal">(ver / corregir)</span></summary>
+        <div id="periodHistoryTable" class="mt-2"></div>
+      </details>
+    </section>
+
+    <!-- DOSSIER & NOTES SECTION -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📓</span>
+            <h3 class="font-bold text-sm sm:text-base md:text-lg text-slate-800 dark:text-slate-100">
+              Dossier Táctico de Personalidad & Actitudes
+            </h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Anota sus gustos, manías, detonantes y gestos que le encantan para no olvidar nunca qué le alegra la vida.
+          </p>
+        </div>
+        <button id="addNoteBtn" type="button" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 self-start sm:self-auto active:scale-95 transition-all">
+          <span>➕</span>
+          <span>Añadir Anotación</span>
+        </button>
+      </div>
+
+      <input id="noteSearch" type="search" placeholder="🔎 Buscar en el dossier…" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none text-xs">
+
+      <!-- Filters for Notes -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs">
+        <button type="button" class="note-filter-btn shrink-0 px-2.5 py-1 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900" data-filter="all">
+          Todas (<span id="countAllNotes">0</span>)
+        </button>
+        <button type="button" class="note-filter-btn shrink-0 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="loved">
+          ❤️ Le Encantó
+        </button>
+        <button type="button" class="note-filter-btn shrink-0 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="trigger">
+          💣 Detonante
+        </button>
+        <button type="button" class="note-filter-btn shrink-0 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="craving">
+          🍫 Antojo Clave
+        </button>
+        <button type="button" class="note-filter-btn shrink-0 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold" data-filter="quirk">
+          💡 Manía / Rasgo
+        </button>
+      </div>
+
+      <!-- Notes Grid Container -->
+      <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- CRISIS TRANSLATOR SECTION -->
+    <section id="translatorSection" class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <span class="text-xl">🗣️</span>
+        <div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">
+            Traductor Táctico: ¿Qué responder cuando dice...?
+          </h3>
+          <p class="text-xs text-slate-500">Decodificador masculino de frases comunes y respuestas de alto impacto.</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Selecciona la frase o situación:</label>
+          <select id="phraseSelect" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500"></select>
+        </div>
+
+        <div id="translationOutput" class="p-3.5 sm:p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FUTURE DATE SIMULATOR & ICAL EXPORT -->
+    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔮</span>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">
+              Calculadora del Futuro (Citas, Viajes & Boda)
+            </h3>
+            <p class="text-xs text-slate-500">Conoce con antelación en qué fase estará para agendar el plan idóneo.</p>
+          </div>
+        </div>
+        <button id="exportIcsBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all self-start sm:self-auto">
+          <span>📅</span>
+          <span>Exportar Calendario (.ics)</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+        <div class="sm:col-span-2 space-y-1">
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Elige una fecha futura:</label>
+          <input type="date" id="simDateInput" class="w-full text-xs sm:text-sm p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500">
+        </div>
+        <div>
+          <button id="simWeekendBtn" type="button" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all">
+            Próximo Fin de Semana
+          </button>
+        </div>
+      </div>
+
+      <div id="simResultCard" class="p-3.5 rounded-2xl bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-4xl mx-auto px-4 pt-8 pb-safe text-center text-xs text-slate-400 space-y-1.5">
+    <p class="font-semibold text-slate-500 dark:text-slate-400">Prometido Pro — Creado para acompañarla con empatía, amor y ciencia.</p>
+    <p class="text-[11px]">Tus datos se guardan solo en este celular, se autoguardan con cada cambio y la app funciona sin internet. Haz una copia de seguridad de vez en cuando desde ⚙️.</p>
+  </footer>
+
+  <!-- MODALS CONTAINER -->
+
+  <!-- 1. Generic Detail Modal (Battery, Sensitivity, Craving, Secretion, SOS) -->
+  <div id="genericModal" role="dialog" aria-modal="true" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div id="modalIcon" class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl font-bold">
+            💡
+          </div>
+          <h3 id="modalTitle" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 leading-snug">
+            Detalle
+          </h3>
+        </div>
+        <button type="button" data-close="genericModal" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center text-sm font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div id="modalMsg" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <!-- Injected dynamic message -->
+      </div>
+
+      <div class="pt-2">
+        <button type="button" data-close="genericModal" class="w-full py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs shadow-sm">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Cycle Configuration Modal -->
+  <div id="configModal" role="dialog" aria-modal="true" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚙️</span>
+          <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Configuración del Ciclo</h3>
+        </div>
+        <button type="button" data-close="configModal" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <form id="configForm" class="space-y-3.5 text-xs sm:text-sm">
+        <div class="space-y-1">
+          <label for="cfgFiancéeName" class="font-bold text-slate-700 dark:text-slate-300">Su nombre:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <select id="cfgPartnerLabel" aria-label="Ella es tu" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+              <option>Prometida</option><option>Esposa</option><option>Novia</option><option>Pareja</option>
+            </select>
+            <input type="text" id="cfgFiancéeName" required maxlength="40" class="col-span-2 w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Primer día de su último periodo (sangrado):</label>
+          <input type="date" id="cfgLastPeriodDate" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <p class="text-[11px] text-slate-400">Si no recuerdas el día exacto, puedes colocar una fecha aproximada y corregirla cuando empiece.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">Duración ciclo (días):</label>
+            <input type="number" id="cfgCycleLength" min="20" max="45" value="28" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+            <span class="text-[10px] text-slate-400">Normal: 26 - 32 días</span>
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">Días de sangrado:</label>
+            <input type="number" id="cfgPeriodDuration" min="2" max="10" value="5" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+            <span class="text-[10px] text-slate-400">Normal: 4 - 6 días</span>
+          </div>
+        </div>
+
+        <p id="cfgHistoryHint" class="hidden text-[11px] p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 leading-snug"></p>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" data-close="configModal" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm transition-all active:scale-95">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+
+      <!-- Copia de seguridad -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">💾</span>
+          <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Tus datos y copia de seguridad</h4>
+        </div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Todo se autoguarda en este celular. Si cambias de teléfono o borras los datos del navegador, se perdería: descarga una copia de vez en cuando.</p>
+        <p id="storageInfo" class="text-[11px] font-mono text-slate-500 dark:text-slate-400"></p>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="exportBackupBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">⬇️ Descargar copia</button>
+          <label class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 text-center cursor-pointer">
+            ⬆️ Restaurar copia
+            <input id="importBackupInput" type="file" accept="application/json,.json" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <!-- Notificaciones -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🔔</span>
+            <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Aviso diario</h4>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input id="cfgNotifyEnabled" type="checkbox" class="sr-only peer">
+            <span class="w-10 h-6 rounded-full bg-slate-300 dark:bg-slate-700 peer-checked:bg-rose-600 transition-colors"></span>
+            <span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span>
+          </label>
+        </div>
+        <p id="notifyStatus" class="text-[11px] text-slate-500 dark:text-slate-400"></p>
+        <div class="grid grid-cols-2 gap-2 items-center">
+          <label class="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300">Hora:
+            <input id="cfgNotifyTime" type="time" class="flex-1 p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+          </label>
+          <button id="notifyTestBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Probar aviso</button>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-snug">En Android con la app instalada, Chrome intenta avisarte aunque no la abras (puede retrasarse). En iPhone el aviso llega al abrir la app. Para recordatorios 100% puntuales usa también "Exportar Calendario (.ics)".</p>
+      </div>
+
+      <!-- Nube -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">☁️</span>
+          <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Sincronización en la nube <span class="font-normal text-slate-400">(opcional)</span></h4>
+        </div>
+        <p id="cloudError" class="hidden p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-[11px]"></p>
+
+        <div id="cloudSetup" class="space-y-2">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Respalda tus datos en tu propio proyecto gratuito de Firebase y compártelos entre dos celulares (los dos inician sesión con la misma cuenta). Pasos en el README del proyecto.</p>
+          <textarea id="cloudConfigInput" rows="3" placeholder="Pega aquí el bloque firebaseConfig = { apiKey: ..., projectId: ... }" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none font-mono text-[11px]"></textarea>
+          <button id="cloudSaveConfigBtn" type="button" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Guardar configuración</button>
+        </div>
+
+        <div id="cloudLogin" class="hidden space-y-2">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Proyecto: <strong id="cloudProject" class="font-mono"></strong> · <button id="cloudForgetBtn" type="button" class="underline">cambiar</button></p>
+          <input id="cloudEmailInput" type="email" autocomplete="email" placeholder="Correo" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <input id="cloudPassInput" type="password" autocomplete="current-password" placeholder="Contraseña (mín. 6)" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none">
+          <div class="grid grid-cols-2 gap-2">
+            <button id="cloudSignInBtn" type="button" class="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold">Iniciar sesión</button>
+            <button id="cloudSignUpBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Crear cuenta</button>
+          </div>
+        </div>
+
+        <div id="cloudConnected" class="hidden space-y-2">
+          <p class="text-[11px] text-slate-600 dark:text-slate-300">✅ Conectado como <strong id="cloudEmail"></strong></p>
+          <p id="cloudLastSync" class="text-[11px] font-mono text-slate-500 dark:text-slate-400"></p>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="cloudSyncNowBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">🔄 Sincronizar ya</button>
+            <button id="cloudSignOutBtn" type="button" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Add Note / Personality Entry Modal -->
+  <div id="noteModal" role="dialog" aria-modal="true" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📝</span>
+          <h3 id="noteModalTitle" class="text-base font-extrabold text-slate-800 dark:text-slate-100">Nueva Anotación en Dossier</h3>
+        </div>
+        <button type="button" data-close="noteModal" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <form id="noteForm" class="space-y-3.5 text-xs sm:text-sm">
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Categoría:</label>
+          <select id="noteCategory" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+            <option value="loved">❤️ Le Encantó (Detalle o gesto que amó)</option>
+            <option value="trigger">💣 Detonante (Cosa que evitar a toda costa)</option>
+            <option value="craving">🍫 Antojo Clave (Comida o snack favorito)</option>
+            <option value="quirk">💡 Manía / Rasgo de Personalidad</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Fase biológica asociada:</label>
+          <select id="notePhase" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+            <option value="current">Fase Actual del Ciclo</option>
+            <option value="all">Aplica Siempre (Personalidad fija)</option>
+            <option value="winter">Invierno (Menstrual / Dolor / Manta)</option>
+            <option value="spring">Primavera (Folicular / Aventuras)</option>
+            <option value="summer">Verano (Ovulatoria / Romance)</option>
+            <option value="autumn">Otoño (Lútea / SPM / Sensibilidad)</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Título / Qué pasó o qué descubriste:</label>
+          <input type="text" id="noteTitle" required maxlength="120" placeholder="Ej. El té de jengibre con limón le calma los cólicos" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700 dark:text-slate-300">Detalle o nota táctica:</label>
+          <textarea id="noteContent" rows="3" placeholder="Apunta detalles: marcas favoritas, qué palabras usar, cómo reaccionar..." class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100"></textarea>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" data-close="noteModal" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
+            Cancelar
+          </button>
+          <button id="noteSubmitBtn" type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-sm">
+            Guardar Nota
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. PWA Installation Instructions Modal -->
+  <div id="installModal" role="dialog" aria-modal="true" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl font-bold">
+            📲
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100">Instalar en tu Celular</h3>
+            <p class="text-[11px] text-slate-400">Sin tiendas ni pagos, directo en tu pantalla de inicio.</p>
+          </div>
+        </div>
+        <button type="button" data-close="installModal" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        <button id="installNowBtn" type="button" class="hidden w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold shadow-sm active:scale-95 transition-all">
+          📲 Instalar ahora
+        </button>
+        <p class="text-[11px] p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-emerald-800 dark:text-emerald-200">
+          ✅ Una vez instalada funciona <strong>sin internet</strong> y tus datos se quedan guardados en el celular.
+        </p>
+        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+          <strong class="text-slate-800 dark:text-slate-100 block flex items-center gap-1.5">
+            <span>🍏</span> En iPhone (Safari):
+          </strong>
+          <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 pl-1">
+            <li>Abre esta página en el navegador <strong>Safari</strong>.</li>
+            <li>Toca el botón <strong>Compartir</strong> (el cuadro con una flecha hacia arriba).</li>
+            <li>Baja y selecciona <strong>"Agregar al inicio"</strong> (o "Añadir a pantalla de inicio").</li>
+          </ol>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+          <strong class="text-slate-800 dark:text-slate-100 block flex items-center gap-1.5">
+            <span>🤖</span> En Android (Chrome):
+          </strong>
+          <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 pl-1">
+            <li>Abre este enlace en <strong>Google Chrome</strong>.</li>
+            <li>Toca los tres puntos de la esquina superior derecha <strong>(⋮)</strong>.</li>
+            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button type="button" data-close="installModal" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm">
+          ¡Listo, entendido!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cycle.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
