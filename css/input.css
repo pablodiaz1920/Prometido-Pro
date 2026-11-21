@@ -1,0 +1,50 @@
+/* Fuente de estilos. Se compila a css/styles.css con:  npm run build:css */
+
+/* Fuentes alojadas localmente (funcionan sin internet) */
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-display: swap; font-weight: 400; src: url('../fonts/plus-jakarta-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-display: swap; font-weight: 500; src: url('../fonts/plus-jakarta-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-display: swap; font-weight: 600; src: url('../fonts/plus-jakarta-sans-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-display: swap; font-weight: 700; src: url('../fonts/plus-jakarta-sans-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-display: swap; font-weight: 800; src: url('../fonts/plus-jakarta-sans-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-display: swap; font-weight: 400; src: url('../fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-display: swap; font-weight: 600; src: url('../fonts/jetbrains-mono-latin-600-normal.woff2') format('woff2'); }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    -webkit-tap-highlight-color: transparent;
+    /* Respeta la "muesca" y la barra inferior del iPhone en modo app */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  header { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+  .toast { bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
+  /* Evita el zoom automático de iPhone al tocar campos de texto */
+  @media (max-width: 640px) {
+    input, select, textarea { font-size: 16px !important; }
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+  .dark .glass-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(30, 41, 59, 0.8);
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .phase-glow-winter { box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.25); }
+  .phase-glow-spring { box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25); }
+  .phase-glow-summer { box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.25); }
+  .phase-glow-autumn { box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.25); }
+}
