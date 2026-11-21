@@ -955,6 +955,7 @@ function openConfigModal() {
   renderNotifySettings();
   renderCloudSettings();
   renderStorageInfo();
+  getInstalledVersion().then((v) => { $('appVersionInfo').textContent = `Versión instalada: ${v}`; });
   openModal('configModal');
 }
 
@@ -1374,17 +1375,18 @@ async function installNow() {
 function setupServiceWorker() {
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
   navigator.serviceWorker.register('./sw.js').then((reg) => {
-    const promptUpdate = (worker) => showToast('Nueva versión disponible', {
-      label: 'Actualizar',
-      onClick: () => worker.postMessage('SKIP_WAITING')
-    });
-    if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
+    // Versiones antiguas se quedaban "esperando": las activamos ya
+    if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
       nw.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) promptUpdate(nw);
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          showToast('⬇️ Actualizando a la nueva versión…');
+          nw.postMessage('SKIP_WAITING');
+        }
       });
     });
+    reg.update().catch(() => {});
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') reg.update().catch(() => {});
     });
@@ -1397,8 +1399,36 @@ function setupServiceWorker() {
     if (refreshing || !hadController) return;
     refreshing = true;
     Store.flush();
+    try { sessionStorage.setItem('pp_just_updated', '1'); } catch (e) { /* */ }
     location.reload();
   });
+}
+
+// Pregunta al service worker qué versión está activa
+function getInstalledVersion() {
+  return new Promise((resolve) => {
+    const ctrl = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if (!ctrl) return resolve('—');
+    const ch = new MessageChannel();
+    ch.port1.onmessage = (e) => resolve(e.data);
+    ctrl.postMessage('GET_VERSION', [ch.port2]);
+    setTimeout(() => resolve('desconocida (antigua)'), 1500);
+  });
+}
+
+// Botón de emergencia: borra la copia offline de la app (NO tus datos) y la descarga de nuevo
+async function forceUpdate() {
+  if (!navigator.onLine) return showToast('Necesitas internet para actualizar');
+  if (!confirm('Se descargará de nuevo la app. Tus datos NO se borran. ¿Continuar?')) return;
+  Store.flush();
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map((r) => r.unregister()));
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k.startsWith('prometido-pro-')).map((k) => caches.delete(k)));
+  } catch (e) { /* */ }
+  try { sessionStorage.setItem('pp_just_updated', '1'); } catch (e) { /* */ }
+  location.reload();
 }
 
 /* ==========================================================================
@@ -1424,6 +1454,7 @@ function bindEvents() {
   on('calNext', 'click', () => changeCalendarMonth(1));
   on('calToday', 'click', goToTodayCalendar);
   on('exportBackupBtn', 'click', exportBackup);
+  on('forceUpdateBtn', 'click', forceUpdate);
   on('importBackupInput', 'change', (e) => { importBackup(e.target.files[0]); e.target.value = ''; });
   on('secretionsWarningLink', 'click', () => $('secretionsWarningBox').scrollIntoView({ behavior: 'smooth', block: 'center' }));
 
@@ -1546,6 +1577,13 @@ function init() {
   requestPersistentStorage();
   publishStateForWorker();
   checkDailyNotification();
+
+  try {
+    if (sessionStorage.getItem('pp_just_updated')) {
+      sessionStorage.removeItem('pp_just_updated');
+      setTimeout(() => showToast('✅ App actualizada'), 300);
+    }
+  } catch (e) { /* */ }
 
   if (!hadData) {
     Store.saveNow();
