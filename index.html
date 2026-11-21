@@ -46,7 +46,7 @@
               Prometido Pro
             </h1>
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900">
-              v5.0.1
+              v5.0.2
             </span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Manual de Operaciones & CRM Biológico</p>
@@ -711,6 +711,17 @@
             <input id="importBackupInput" type="file" accept="application/json,.json" class="hidden">
           </label>
         </div>
+      </div>
+
+      <!-- Versión / actualización -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🔄</span>
+          <h4 class="font-extrabold text-slate-800 dark:text-slate-100">Versión de la app</h4>
+        </div>
+        <p id="appVersionInfo" class="text-[11px] font-mono text-slate-500 dark:text-slate-400">Versión instalada: …</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">La app se actualiza sola al abrirla con internet. Si ves algo raro o una versión vieja, fuerza la actualización (tus datos no se borran).</p>
+        <button id="forceUpdateBtn" type="button" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700">🔄 Forzar actualización</button>
       </div>
 
       <!-- Notificaciones -->

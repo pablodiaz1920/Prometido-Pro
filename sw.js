@@ -1,7 +1,7 @@
 // Service worker: guarda la app en el celular para que abra SIN internet.
 // IMPORTANTE: cada vez que cambies cualquier archivo, sube el número de VERSION
 // para que los celulares descarguen la versión nueva.
-const VERSION = 'v5.0.1';
+const VERSION = 'v5.0.2';
 const CACHE = `prometido-pro-${VERSION}`;
 
 // Lógica del ciclo compartida con la app (para armar el aviso diario)
@@ -32,7 +32,13 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
+  // cache: 'reload' evita tomar archivos viejos de la caché HTTP del navegador.
+  // skipWaiting: la versión nueva se activa sola, sin esperar a que toques nada.
+  event.waitUntil(
+    caches.open(CACHE)
+      .then((cache) => cache.addAll(ASSETS.map((url) => new Request(url, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (event) => {
@@ -46,6 +52,7 @@ self.addEventListener('activate', (event) => {
 // La app pide activar la nueva versión cuando tocas "Actualizar"
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data === 'GET_VERSION' && event.ports[0]) event.ports[0].postMessage(VERSION);
 });
 
 // Estrategia "primero la caché": abre al instante y sin conexión.
