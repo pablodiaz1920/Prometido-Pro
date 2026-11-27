@@ -35,14 +35,33 @@ function mergeStates(local, remote) {
     .filter((n) => !isDeleted(`note:${n.id}`, n.updatedAt || n.createdAt))
     .sort((a, b) => ts(b.createdAt) - ts(a.createdAt));
 
-  // Bitácora y misiones: por día, gana la entrada más reciente
-  for (const field of ['dailyLog', 'missionsLog']) {
-    const merged = { ...(local[field] || {}) };
-    for (const [day, entry] of Object.entries(remote[field] || {})) {
-      if (!merged[day] || ts(entry.updatedAt || entry._t) > ts(merged[day].updatedAt || merged[day]._t)) merged[day] = entry;
-    }
-    out[field] = merged;
+  // Misiones: por día, gana la entrada más reciente
+  const missions = { ...(local.missionsLog || {}) };
+  for (const [day, entry] of Object.entries(remote.missionsLog || {})) {
+    if (!missions[day] || ts(entry._t) > ts(missions[day]._t)) missions[day] = entry;
   }
+  out.missionsLog = missions;
+
+  // Bitácora: por día gana la más reciente, pero las NOTAS de ambos celulares se suman
+  const migrate = (e) => (typeof migrateLogEntry === 'function' ? migrateLogEntry(e) : e);
+  const log = {};
+  for (const [day, e] of Object.entries(local.dailyLog || {})) log[day] = migrate(e);
+  for (const [day, raw] of Object.entries(remote.dailyLog || {})) {
+    const r = migrate(raw);
+    const l = log[day];
+    if (!l) { log[day] = r; continue; }
+    const newer = ts(r.updatedAt) > ts(l.updatedAt) ? r : l;
+    const notes = new Map();
+    for (const n of [...(l.notes || []), ...(r.notes || [])]) {
+      const prev = notes.get(n.id);
+      if (!prev || ts(n.updatedAt || n.createdAt) > ts(prev.updatedAt || prev.createdAt)) notes.set(n.id, n);
+    }
+    log[day] = { ...newer, notes: [...notes.values()] };
+  }
+  for (const e of Object.values(log)) {
+    if (e && Array.isArray(e.notes)) e.notes = e.notes.filter((n) => !isDeleted(`lognote:${n.id}`, n.updatedAt || n.createdAt));
+  }
+  out.dailyLog = log;
 
   // Historial de reglas: unión, menos las borradas
   const periods = new Set([...(local.periodHistory || []), ...(remote.periodHistory || [])]);

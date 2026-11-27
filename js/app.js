@@ -62,7 +62,9 @@ function normalizeState(raw) {
   if (!PARTNER_LABELS.includes(s.config.partnerLabel)) s.config.partnerLabel = 'Prometida';
   if (Array.isArray(raw.notes)) s.notes = raw.notes.filter((n) => n && n.id && n.title);
   if (raw.missionsLog && typeof raw.missionsLog === 'object') s.missionsLog = raw.missionsLog;
-  if (raw.dailyLog && typeof raw.dailyLog === 'object') s.dailyLog = raw.dailyLog;
+  if (raw.dailyLog && typeof raw.dailyLog === 'object') {
+    s.dailyLog = Object.fromEntries(Object.entries(raw.dailyLog).map(([k, e]) => [k, migrateLogEntry(e)]));
+  }
   if (raw.tombstones && typeof raw.tombstones === 'object') s.tombstones = raw.tombstones;
   if (Array.isArray(raw.periodHistory)) {
     s.periodHistory = [...new Set(raw.periodHistory.filter((d) => parseISODate(d)))].sort();
@@ -296,18 +298,47 @@ function renderStreak() {
 const FLOW_OPTIONS = [
   ['none', 'Nada'], ['spotting', 'Manchado'], ['light', 'Ligero'], ['medium', 'Medio'], ['heavy', 'Abundante']
 ];
-const MOOD_OPTIONS = [[1, '😢', 'Muy mal'], [2, '😕', 'Mal'], [3, '😐', 'Normal'], [4, '🙂', 'Bien'], [5, '😄', 'Genial']];
+// Estados de ánimo (se pueden marcar varios a la vez)
+const MOODS = {
+  happy: '😄 Feliz', calm: '😌 Tranquila', inlove: '🥰 Enamorada', affectionate: '🤗 Cariñosa',
+  playful: '😜 Juguetona', motivated: '💪 Motivada', sensitive: '🥺 Sensible', sad: '😢 Triste',
+  angry: '😠 Enojada', irritable: '😤 Irritable', anxious: '😰 Ansiosa', stressed: '😫 Estresada',
+  overwhelmed: '😵‍💫 Abrumada', insecure: '😟 Insegura', apathetic: '😑 Apática'
+};
+const NOTE_MAX = 500;
 const ENERGY_OPTIONS = [[1, '🪫', 'Agotada'], [2, '🔋', 'Baja'], [3, '🔋🔋', 'Media'], [4, '⚡', 'Alta'], [5, '🚀', 'A tope']];
 const SYMPTOMS = {
   cramps: '🤕 Cólicos', headache: '🤯 Dolor de cabeza', bloating: '🎈 Hinchazón', fatigue: '😴 Cansancio',
   cravings: '🍫 Antojos', breasts: '💗 Senos sensibles', acne: '🔴 Granitos', backpain: '🦴 Dolor de espalda',
-  irritable: '⚡ Irritable', anxious: '😰 Ansiosa', sad: '🥺 Sensible / triste', insomnia: '🌙 Insomnio',
-  libido: '🔥 Libido alta', nausea: '🤢 Náuseas'
+  insomnia: '🌙 Insomnio', libido: '🔥 Libido alta', nausea: '🤢 Náuseas'
 };
 const BLEEDING_FLOWS = ['light', 'medium', 'heavy'];
 
+// Convierte entradas de la versión anterior: ánimo 1-5 → emociones, nota única → lista de notas
+const OLD_MOOD_MAP = { 1: 'sad', 2: 'sensitive', 3: 'calm', 4: 'happy', 5: 'happy' };
+const SYMPTOM_TO_MOOD = { irritable: 'irritable', anxious: 'anxious', sad: 'sensitive' };
+function migrateLogEntry(e) {
+  if (!e || typeof e !== 'object') return e;
+  const out = { ...e };
+  const moods = Array.isArray(e.moods) ? [...e.moods] : [];
+  if (typeof e.mood === 'number' && OLD_MOOD_MAP[e.mood]) moods.push(OLD_MOOD_MAP[e.mood]);
+  out.symptoms = (e.symptoms || []).filter((k) => {
+    if (SYMPTOM_TO_MOOD[k]) { moods.push(SYMPTOM_TO_MOOD[k]); return false; }
+    return true;
+  });
+  out.moods = [...new Set(moods)].filter((m) => MOODS[m]);
+  const notes = Array.isArray(e.notes) ? e.notes.filter((n) => n && n.text) : [];
+  if (e.text) {
+    // id estable: si dos celulares migran la misma nota, no se duplica
+    notes.push({ id: `ln_${hashString(e.text + (e.updatedAt || ''))}`, text: e.text, createdAt: e.updatedAt || nowISO() });
+  }
+  out.notes = notes;
+  delete out.mood;
+  delete out.text;
+  return out;
+}
+
 let logDate = new Date();
-let logTextTimer = null;
 
 function currentLog() {
   return state.dailyLog[toISODate(logDate)] || {};
@@ -316,7 +347,7 @@ function currentLog() {
 function updateLog(patch) {
   const key = toISODate(logDate);
   const entry = { symptoms: [], ...(state.dailyLog[key] || {}), ...patch, updatedAt: nowISO() };
-  const empty = !entry.flow && !entry.mood && !entry.energy && !entry.symptoms.length && !entry.text;
+  const empty = !entry.flow && !entry.energy && !(entry.moods || []).length && !entry.symptoms.length && !(entry.notes || []).length;
   if (empty) delete state.dailyLog[key];
   else state.dailyLog[key] = entry;
   Store.save();
@@ -342,11 +373,12 @@ function renderDailyLog() {
   $('logTodayBtn').classList.toggle('hidden', isToday);
 
   $('logFlow').innerHTML = FLOW_OPTIONS.map(([v, l]) => chip(entry.flow === v, l, `data-log-flow="${v}"`)).join('');
-  $('logMood').innerHTML = MOOD_OPTIONS.map(([v, e, l]) => chip(entry.mood === v, e, `data-log-mood="${v}"`, l)).join('');
+  const moods = entry.moods || [];
+  $('logMood').innerHTML = Object.entries(MOODS).map(([k, l]) => chip(moods.includes(k), l, `data-log-mood="${k}"`)).join('');
   $('logEnergy').innerHTML = ENERGY_OPTIONS.map(([v, e, l]) => chip(entry.energy === v, `${e} <span class="hidden sm:inline">${l}</span>`, `data-log-energy="${v}"`, l)).join('');
   const sym = entry.symptoms || [];
   $('logSymptoms').innerHTML = Object.entries(SYMPTOMS).map(([k, l]) => chip(sym.includes(k), l, `data-log-symptom="${k}"`)).join('');
-  if (document.activeElement !== $('logText')) $('logText').value = entry.text || '';
+  renderLogNotes(entry);
 
   // Sugerencia: si registra sangrado lejos de la fecha prevista, ofrece reiniciar el ciclo
   const suggest = BLEEDING_FLOWS.includes(entry.flow) && s.phase.id !== 'winter' && !state.periodHistory.includes(iso);
@@ -358,7 +390,12 @@ function onLogClick(e) {
   if (!b) return;
   const entry = currentLog();
   if (b.dataset.logFlow) updateLog({ flow: entry.flow === b.dataset.logFlow ? null : b.dataset.logFlow });
-  else if (b.dataset.logMood) updateLog({ mood: entry.mood === +b.dataset.logMood ? null : +b.dataset.logMood });
+  else if (b.dataset.logMood) {
+    const set = new Set(entry.moods || []);
+    set.has(b.dataset.logMood) ? set.delete(b.dataset.logMood) : set.add(b.dataset.logMood);
+    updateLog({ moods: [...set] });
+  } else if (b.dataset.lognoteEdit) return startEditLogNote(b.dataset.lognoteEdit);
+  else if (b.dataset.lognoteDelete) return deleteLogNote(b.dataset.lognoteDelete);
   else if (b.dataset.logEnergy) updateLog({ energy: entry.energy === +b.dataset.logEnergy ? null : +b.dataset.logEnergy });
   else if (b.dataset.logSymptom) {
     const sym = new Set(entry.symptoms || []);
@@ -373,7 +410,124 @@ function onLogClick(e) {
 
 function setLogDate(d) {
   logDate = d > new Date() ? new Date() : d;
+  cancelEditLogNote();
   renderDailyLog();
+}
+
+/* ---------- Notas del día (varias por día) ---------- */
+let editingLogNoteId = null;
+const timeOf = (iso) => { const d = new Date(iso); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+
+function renderLogNotes(entry) {
+  const notes = (entry.notes || []).slice().sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+  $('logNotesList').innerHTML = notes.map((n) => `
+    <div class="flex items-start gap-2 p-2.5 rounded-xl border ${n.id === editingLogNoteId ? 'border-rose-400 bg-rose-50 dark:bg-rose-950/40' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'}">
+      <span class="text-[10px] font-mono text-slate-400 pt-0.5 shrink-0">${timeOf(n.createdAt)}</span>
+      <p class="flex-1 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line break-words">${escapeHTML(n.text)}</p>
+      <button type="button" data-lognote-edit="${n.id}" class="text-slate-400 hover:text-rose-600 text-xs font-bold px-1.5" aria-label="Editar nota">✎</button>
+      <button type="button" data-lognote-delete="${n.id}" class="text-slate-400 hover:text-rose-600 text-xs font-bold px-1.5" aria-label="Borrar nota">✕</button>
+    </div>`).join('');
+  $('logNotesCount').textContent = notes.length ? `(${notes.length})` : '';
+  updateNoteCounter();
+}
+
+function updateNoteCounter() {
+  const len = $('logText').value.length;
+  const c = $('logTextCounter');
+  c.textContent = `${len}/${NOTE_MAX}`;
+  c.className = `text-[10px] font-mono ${len >= NOTE_MAX ? 'text-rose-600 font-bold' : len >= NOTE_MAX * 0.85 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-400'}`;
+  $('logNoteAddBtn').disabled = !$('logText').value.trim();
+}
+
+function saveLogNote() {
+  const text = $('logText').value.trim().slice(0, NOTE_MAX);
+  if (!text) return;
+  const entry = currentLog();
+  const notes = (entry.notes || []).slice();
+  const existing = editingLogNoteId && notes.find((n) => n.id === editingLogNoteId);
+  if (existing) Object.assign(existing, { text, updatedAt: nowISO() });
+  else {
+    // Si registras un día pasado, la hora se pone a las 12:00 de ese día
+    const when = toISODate(logDate) === todayISO() ? new Date() : new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate(), 12);
+    notes.push({ id: `ln_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, text, createdAt: when.toISOString() });
+  }
+  updateLog({ notes });
+  const wasEditing = !!existing;
+  cancelEditLogNote();
+  $('logText').value = '';
+  playChime('success');
+  renderDailyLog();
+  renderCalendar();
+  showToast(wasEditing ? 'Nota actualizada' : 'Nota añadida');
+}
+
+function startEditLogNote(id) {
+  const n = (currentLog().notes || []).find((x) => x.id === id);
+  if (!n) return;
+  editingLogNoteId = id;
+  $('logText').value = n.text;
+  $('logNoteAddBtn').textContent = '💾 Guardar cambio';
+  $('logNoteCancelBtn').classList.remove('hidden');
+  renderLogNotes(currentLog());
+  $('logText').focus();
+}
+
+function cancelEditLogNote() {
+  editingLogNoteId = null;
+  if (!$('logNoteAddBtn')) return;
+  $('logNoteAddBtn').textContent = '➕ Añadir nota';
+  $('logNoteCancelBtn').classList.add('hidden');
+}
+
+function deleteLogNote(id) {
+  const n = (currentLog().notes || []).find((x) => x.id === id);
+  if (!n || !confirm('¿Borrar esta nota?')) return;
+  updateLog({ notes: (currentLog().notes || []).filter((x) => x.id !== id) });
+  state.tombstones[`lognote:${id}`] = nowISO();
+  if (editingLogNoteId === id) { cancelEditLogNote(); $('logText').value = ''; }
+  renderDailyLog();
+  renderCalendar();
+}
+
+// Todas las notas de todos los días, de la más reciente a la más antigua
+function openAllLogNotes() {
+  const days = Object.entries(state.dailyLog)
+    .filter(([, e]) => (e.notes || []).length)
+    .sort(([a], [b]) => b.localeCompare(a));
+  const total = days.reduce((acc, [, e]) => acc + e.notes.length, 0);
+  const html = days.length ? `
+    <p class="text-[11px] text-slate-500 mb-2">${total} nota${total === 1 ? '' : 's'} en ${days.length} día${days.length === 1 ? '' : 's'}.</p>
+    <input id="allNotesSearch" type="search" placeholder="🔎 Buscar en las notas…" class="w-full p-2.5 mb-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+    <div id="allNotesList" class="space-y-3 text-left">${days.map(([iso, e]) => {
+      const d = parseISODate(iso);
+      const ph = historicalPhase(iso, d);
+      const notes = e.notes.slice().sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+      return `<div class="all-notes-day space-y-1.5">
+        <button type="button" data-action="edit-log" data-date="${iso}" class="w-full flex items-center justify-between gap-2 text-left">
+          <strong class="text-xs capitalize text-slate-800 dark:text-slate-100">${formatLongDate(d)}</strong>
+          <span class="text-[10px] text-slate-400 whitespace-nowrap">${PHASE_EMOJI[ph]} ${PHASE_SHORT[ph]} ›</span>
+        </button>
+        ${(e.moods || []).length ? `<p class="text-[11px] text-slate-500">${e.moods.map((m) => MOODS[m]).filter(Boolean).join(' · ')}</p>` : ''}
+        ${notes.map((n) => `<div class="all-note p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex gap-2">
+          <span class="text-[10px] font-mono text-slate-400 pt-0.5">${timeOf(n.createdAt)}</span>
+          <p class="text-xs whitespace-pre-line break-words">${escapeHTML(n.text)}</p>
+        </div>`).join('')}
+      </div>`;
+    }).join('')}</div>` : '<p class="text-xs text-slate-500">Todavía no hay notas. Escríbelas en la Bitácora del Día.</p>';
+  openGenericModal('📚', 'Todas las notas del día a día', html);
+  const search = $('allNotesSearch');
+  if (search) search.addEventListener('input', () => {
+    const q = normalizeText(search.value);
+    document.querySelectorAll('#allNotesList .all-notes-day').forEach((day) => {
+      let any = false;
+      day.querySelectorAll('.all-note').forEach((n) => {
+        const hit = !q || normalizeText(n.textContent).includes(q);
+        n.classList.toggle('hidden', !hit);
+        any = any || hit;
+      });
+      day.classList.toggle('hidden', !any);
+    });
+  });
 }
 
 /* ---------- Calendario ---------- */
@@ -446,12 +600,12 @@ function renderSelectedDay() {
   if (log) {
     const parts = [];
     if (log.flow) parts.push(`Flujo: ${FLOW_OPTIONS.find(([v]) => v === log.flow)[1]}`);
-    if (log.mood) parts.push(`Ánimo: ${MOOD_OPTIONS[log.mood - 1][1]}`);
+    if ((log.moods || []).length) parts.push(`Ánimo: ${log.moods.map((m) => MOODS[m]).filter(Boolean).join(', ')}`);
     if (log.energy) parts.push(`Energía: ${ENERGY_OPTIONS[log.energy - 1][2]}`);
     if (log.symptoms && log.symptoms.length) parts.push(log.symptoms.map((k) => SYMPTOMS[k]).filter(Boolean).join(', '));
     logHtml = `<div class="mt-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
       <strong class="block text-[10px] uppercase text-slate-400 mb-0.5">📝 Bitácora de ese día</strong>
-      <p>${escapeHTML(parts.join(' · '))}</p>${log.text ? `<p class="mt-1 italic">"${escapeHTML(log.text)}"</p>` : ''}
+      <p>${escapeHTML(parts.join(' · '))}</p>${(log.notes || []).map((n) => `<p class="mt-1 italic"><span class="not-italic font-mono text-[10px] text-slate-400">${timeOf(n.createdAt)}</span> "${escapeHTML(n.text)}"</p>`).join('')}
     </div>`;
   }
   $('calendarSelectedDayCard').innerHTML = `
@@ -784,16 +938,18 @@ function renderPhaseInsights() {
   }
   const bar = { winter: 'bg-rose-500', spring: 'bg-emerald-500', summer: 'bg-amber-500', autumn: 'bg-purple-500' };
   $('phaseInsights').innerHTML = Object.entries(byPhase).map(([phase, entries]) => {
-    const moods = entries.filter((e) => e.mood).map((e) => e.mood);
-    const moodAvg = moods.length ? moods.reduce((a, b) => a + b, 0) / moods.length : null;
+    const moodCounts = {};
+    entries.forEach((e) => (e.moods || []).forEach((m) => { moodCounts[m] = (moodCounts[m] || 0) + 1; }));
+    const topMoods = Object.entries(moodCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
     const counts = {};
     entries.forEach((e) => (e.symptoms || []).forEach((k) => { counts[k] = (counts[k] || 0) + 1; }));
     const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4);
     return `<div class="p-3 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 space-y-2">
       <div class="flex items-center justify-between gap-2">
         <strong class="text-xs text-slate-800 dark:text-slate-100">${PHASE_EMOJI[phase]} ${PHASE_SHORT[phase]}</strong>
-        <span class="text-[10px] text-slate-500 dark:text-slate-400">${entries.length} día${entries.length === 1 ? '' : 's'}${moodAvg ? ` · ánimo ${MOOD_OPTIONS[Math.round(moodAvg) - 1][1]}` : ''}</span>
+        <span class="text-[10px] text-slate-500 dark:text-slate-400">${entries.length} día${entries.length === 1 ? '' : 's'}</span>
       </div>
+      ${topMoods.length ? `<div class="flex flex-wrap gap-1">${topMoods.map(([m, c]) => `<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${MOODS[m]} <span class="font-mono">${Math.round((c / entries.length) * 100)}%</span></span>`).join('')}</div>` : ''}
       ${top.length ? top.map(([k, c]) => {
         const pct = Math.round((c / entries.length) * 100);
         return `<div class="text-[11px]">
@@ -1463,11 +1619,11 @@ function bindEvents() {
   on('logPrevBtn', 'click', () => setLogDate(addDays(logDate, -1)));
   on('logNextBtn', 'click', () => setLogDate(addDays(logDate, 1)));
   on('logTodayBtn', 'click', () => setLogDate(new Date()));
-  on('logText', 'input', () => {
-    clearTimeout(logTextTimer);
-    setSyncStatus('saving');
-    logTextTimer = setTimeout(() => { updateLog({ text: $('logText').value.trim() }); renderCalendar(); }, 600);
-  });
+  on('logText', 'input', updateNoteCounter);
+  on('logText', 'keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) saveLogNote(); });
+  on('logNoteAddBtn', 'click', saveLogNote);
+  on('logNoteCancelBtn', 'click', () => { cancelEditLogNote(); $('logText').value = ''; renderLogNotes(currentLog()); });
+  on('viewAllLogNotesBtn', 'click', openAllLogNotes);
   on('logPeriodSuggestBtn', 'click', () => logPeriodOn(toISODate(logDate)));
 
   // Notificaciones
@@ -1525,6 +1681,7 @@ function bindEvents() {
     } else if (a === 'apply-average') {
       $('cfgCycleLength').value = el.dataset.value;
     } else if (a === 'edit-log') {
+      closeModal('genericModal');
       setLogDate(parseISODate(el.dataset.date));
       $('dailyLogSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (a === 'delete-period') {
