@@ -1,7 +1,7 @@
 // Service worker: guarda la app en el celular para que abra SIN internet.
 // IMPORTANTE: cada vez que cambies cualquier archivo, sube el número de VERSION
 // para que los celulares descarguen la versión nueva.
-const VERSION = 'v5.0.2';
+const VERSION = 'v5.1.0';
 const CACHE = `prometido-pro-${VERSION}`;
 
 // Lógica del ciclo compartida con la app (para armar el aviso diario)

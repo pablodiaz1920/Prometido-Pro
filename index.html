@@ -46,7 +46,7 @@
               Prometido Pro
             </h1>
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-900">
-              v5.0.2
+              v5.1.0
             </span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Manual de Operaciones & CRM Biológico</p>
@@ -249,23 +249,32 @@
             <button id="logPeriodSuggestBtn" type="button" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold">Registrar inicio</button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="space-y-1.5">
-            <span class="font-bold text-slate-600 dark:text-slate-300">💭 Estado de ánimo</span>
-            <div id="logMood" class="flex flex-wrap gap-1.5"></div>
-          </div>
-          <div class="space-y-1.5">
-            <span class="font-bold text-slate-600 dark:text-slate-300">⚡ Energía</span>
-            <div id="logEnergy" class="flex flex-wrap gap-1.5"></div>
-          </div>
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">💭 Estado de ánimo <span class="font-normal text-slate-400">(puedes marcar varios)</span></span>
+          <div id="logMood" class="flex flex-wrap gap-1.5"></div>
+        </div>
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-600 dark:text-slate-300">⚡ Energía</span>
+          <div id="logEnergy" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div class="space-y-1.5">
           <span class="font-bold text-slate-600 dark:text-slate-300">🩺 Síntomas</span>
           <div id="logSymptoms" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div class="space-y-1.5">
-          <label for="logText" class="font-bold text-slate-600 dark:text-slate-300">✍️ Nota del día</label>
+          <div class="flex items-center justify-between gap-2">
+            <label for="logText" class="font-bold text-slate-600 dark:text-slate-300">✍️ Notas del día <span id="logNotesCount" class="font-normal text-slate-400"></span></label>
+            <button id="viewAllLogNotesBtn" type="button" class="text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:underline">📚 Ver todas las notas</button>
+          </div>
+          <div id="logNotesList" class="space-y-1.5"></div>
           <textarea id="logText" rows="2" maxlength="500" placeholder="Ej. Hoy estaba muy cariñosa; le dolió la cabeza por la tarde…" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
+          <div class="flex items-center justify-between gap-2">
+            <span id="logTextCounter" class="text-[10px] font-mono text-slate-400" aria-live="polite">0/500</span>
+            <div class="flex gap-1.5">
+              <button id="logNoteCancelBtn" type="button" class="hidden px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Cancelar</button>
+              <button id="logNoteAddBtn" type="button" disabled class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all">➕ Añadir nota</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
